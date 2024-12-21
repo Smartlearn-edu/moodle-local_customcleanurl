@@ -26,7 +26,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-function xmldb_local_customcleanurl_install()
-{
-    \local_customcleanurl\local\htaccess::set_htaccess();
-}
+function xmldb_local_customcleanurl_install() {}

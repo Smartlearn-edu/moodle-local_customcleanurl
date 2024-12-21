@@ -131,19 +131,28 @@ class clean_url
     /** process to claan the default moodle url path */
     private function clean_path()
     {
-
-        switch ($this->path) {
-            case '/user/profile.php':
-                // user profile clean url
+        $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_options');
+        $cleanurl_options = explode(",", $cleanurl_options);
+        if (in_array('course_url', $cleanurl_options)) {
+            // url path start with /course
+            if (preg_match('#^/course#', $this->path, $matches)) {
+                $this->clean_course_url();
+                return;
+            }
+        }
+        if (in_array('user_url', $cleanurl_options)) {
+            // url path start with /course
+            if (preg_match('#^/user/profile.php#', $this->path, $matches)) {
                 $this->clean_users_profile_url();
                 return;
+            }
         }
-
-        // url path start with /course
-        if (preg_match('#^/course#', $this->path, $matches)) {
-            $this->clean_course_url();
-            return;
-        }
+        // switch ($this->path) {
+        //     case '/user/profile.php':
+        //         // user profile clean url
+        //         $this->clean_users_profile_url();
+        //         return;
+        // }
         // // course mod activity and resources
         // if (preg_match('#^/mod/(\w+)/view.php$#', $this->path, $matches)) {
         //     // clean_course_module_view($matches[1]);

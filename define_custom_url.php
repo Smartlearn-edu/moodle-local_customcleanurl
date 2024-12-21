@@ -56,45 +56,56 @@ if (!has_capability('moodle/site:config', $context)) {
     $contents .= "<br>";
     $contents .= "<a href='/'> Return Back</a>";
 } else {
-    /**
-     * ========================================================
-     *     FORM actions
-     * ========================================================
-     */
-    $define_custom_url_form = new \local_customcleanurl\form\custom_url_form();
-    if ($define_custom_url_form->is_cancelled()) {
-        redirect($url);
-    } else if ($form_data = $define_custom_url_form->get_data()) {
-        \local_customcleanurl\form\custom_url_form::data_save($form_data);
-    } else {
-        if ($action && $id) {
-            // verify sesskey
-            $sesskey = required_param('sesskey', PARAM_ALPHANUM);
-            if ($sesskey != sesskey()) {
-                $message = "Your session key is missing or invalid.";
-                redirect($url, $message);
-            }
-            // For Delete
-            if ($action == 'delete') {
-                \local_customcleanurl\form\custom_url_form::data_delete($id);
-            }
-            // For Edit
-            if ($action == 'edit') {
-                \local_customcleanurl\form\custom_url_form::display_edit($define_custom_url_form, $id);
+
+    $emable_customcleanurl = get_config('local_customcleanurl', 'emable_customcleanurl');
+    $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_options');
+    $cleanurl_options = explode(",", $cleanurl_options);
+    if (in_array('define_url', $cleanurl_options) && $emable_customcleanurl) {
+
+        /**
+         * ========================================================
+         *     FORM actions
+         * ========================================================
+         */
+        $define_custom_url_form = new \local_customcleanurl\form\custom_url_form();
+        if ($define_custom_url_form->is_cancelled()) {
+            redirect($url);
+        } else if ($form_data = $define_custom_url_form->get_data()) {
+            \local_customcleanurl\form\custom_url_form::data_save($form_data);
+        } else {
+            if ($action && $id) {
+                // verify sesskey
+                $sesskey = required_param('sesskey', PARAM_ALPHANUM);
+                if ($sesskey != sesskey()) {
+                    $message = "Your session key is missing or invalid.";
+                    redirect($url, $message);
+                }
+                // For Delete
+                if ($action == 'delete') {
+                    \local_customcleanurl\form\custom_url_form::data_delete($id);
+                }
+                // For Edit
+                if ($action == 'edit') {
+                    \local_customcleanurl\form\custom_url_form::display_edit($define_custom_url_form, $id);
+                }
             }
         }
+        /**
+         * ========================================================
+         *     Get the data and display
+         * ========================================================
+         */
+        $contents = '';
+        $contents .= '<div> <h3> Add new url<h3></div>';
+        $contents .= $define_custom_url_form->render();
+        $contents .= '<br>';
+        $contents .= '<div> <h3> List of custom url<h3></div>';
+        $contents .= \local_customcleanurl\form\custom_url_form::get_custom_url_data_table(50);
+    } else {
+        $contents = "\"Custom Clean URL\" is not enable or \"Custom URL Options\" for \"Define Custom URL\" is not set.";
+        $contents .= "<br>";
+        $contents .= "<a href='/admin/category.php?category=customcleanurl_settings'> Return Back and enable it.</a>";
     }
-    /**
-     * ========================================================
-     *     Get the data and display
-     * ========================================================
-     */
-    $contents = '';
-    $contents .= '<div> <h3> Add new url<h3></div>';
-    $contents .= $define_custom_url_form->render();
-    $contents .= '<br>';
-    $contents .= '<div> <h3> List of custom url<h3></div>';
-    $contents .= \local_customcleanurl\form\custom_url_form::get_custom_url_data_table(50);
 }
 /**
  * ========================================================

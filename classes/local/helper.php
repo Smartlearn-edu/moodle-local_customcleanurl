@@ -69,13 +69,17 @@ class helper
         if ($cached_value) {
             $url = $cached_value;
         } else {
-            $check_custom_url = $DB->get_record('local_customcleanurl', ['custom_url' => $request_moodle_url->out(false)]);
-            if ($check_custom_url) {
-                $url = $check_custom_url->default_url;
-            } else {
-                $check_custom_url_path = $DB->get_record('local_customcleanurl', ['custom_url' => $request_moodle_url->get_path(false)]);
-                if ($check_custom_url_path) {
-                    $url = $check_custom_url_path->default_url;
+            $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_options');
+            $cleanurl_options = explode(",", $cleanurl_options);
+            if (in_array('define_url', $cleanurl_options) && $emable_customcleanurl) {
+                $check_custom_url = $DB->get_record('local_customcleanurl', ['custom_url' => $request_moodle_url->out(false)]);
+                if ($check_custom_url) {
+                    $url = $check_custom_url->default_url;
+                } else {
+                    $check_custom_url_path = $DB->get_record('local_customcleanurl', ['custom_url' => $request_moodle_url->get_path(false)]);
+                    if ($check_custom_url_path) {
+                        $url = $check_custom_url_path->default_url;
+                    }
                 }
             }
         }

@@ -54,6 +54,23 @@ if ($moodle_default_url) {
 }
 
 /**
+ * check if new path and file exist or not
+ */
+$get_file_exists = false;
+$route_define = get_cleanurl_define_route();
+foreach ($route_define as $new_path => $actual_path) {
+    if (($url_path == $new_path) || ($url_path == $new_path . '/')) {
+        $filepath = $CFG->dirroot . $actual_path;
+        if (file_exists($filepath)) {
+            chdir(dirname($filepath));
+            require($filepath);
+            die();
+        }
+    }
+}
+
+
+/**
  * directory as path 
  */
 $dir_path = $CFG->dirroot . $url_path;

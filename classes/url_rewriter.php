@@ -66,28 +66,31 @@ class url_rewriter implements \core\output\url_rewriter
      */
     public static function html_head_setup()
     {
-        global $CFG, $PAGE;
-        $clean_url = $PAGE->url->out(false);
-        $output = '';
+        $emable_customcleanurl = get_config('local_customcleanurl', 'emable_customcleanurl');
+        if ($emable_customcleanurl) {
+            global $CFG, $PAGE;
+            $clean_url = $PAGE->url->out(false);
+            $output = '';
 
-        if (isset($CFG->moodle_default_url)) {
-            // This page came through local customcleanurl route .
-            $output .= self::get_base_href($CFG->moodle_default_url->raw_out(false));
-            $output .= self::get_anchor_fix_javascript($clean_url);
-        } else {
-            // This page came through its canonical/legacy address (not clean version).
-            $orig = $PAGE->url->raw_out(false);
-            if ($orig != $clean_url) {
-                // This page URL could have been cleaned up, so do it!
-                $output .= self::get_base_href($orig);
-                $output .= self::get_replacestate_script($clean_url);
+            if (isset($CFG->moodle_default_url)) {
+                // This page came through local customcleanurl route .
+                $output .= self::get_base_href($CFG->moodle_default_url->raw_out(false));
                 $output .= self::get_anchor_fix_javascript($clean_url);
-                $output .= self::get_link_canonical();
-                self::mark_apache_note($clean_url);
+            } else {
+                // This page came through its canonical/legacy address (not clean version).
+                $orig = $PAGE->url->raw_out(false);
+                if ($orig != $clean_url) {
+                    // This page URL could have been cleaned up, so do it!
+                    $output .= self::get_base_href($orig);
+                    $output .= self::get_replacestate_script($clean_url);
+                    $output .= self::get_anchor_fix_javascript($clean_url);
+                    $output .= self::get_link_canonical();
+                    self::mark_apache_note($clean_url);
+                }
             }
-        }
 
-        return $output;
+            return $output;
+        }
     }
 
 

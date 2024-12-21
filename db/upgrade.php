@@ -34,8 +34,6 @@ function xmldb_local_customcleanurl_upgrade($oldversion)
 
     $new_version = 2024083100;
     if ($oldversion < $new_version) {
-        // set updated htaccess
-        \local_customcleanurl\local\htaccess::set_htaccess();
 
         // Define table local_customcleanurl to be created.
         $table = new xmldb_table('local_customcleanurl');
