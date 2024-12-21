@@ -56,6 +56,29 @@ class htaccess
     }
 
     /**
+     * 
+     */
+    public static function check_other_rewrite_rule_htaccess()
+    {
+        global $CFG;
+        $htaccess_file_path = $CFG->dirroot . '/.htaccess';
+        try {
+            if (file_exists($htaccess_file_path)) {
+                $contents = file_get_contents($htaccess_file_path);
+                $wordCount = substr_count(strtolower($contents), strtolower('RewriteRule'));
+                return ($wordCount == '1') ? true : false;
+            } else {
+                return false;
+            }
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+        return false;
+    }
+
+
+    /**
      * to set RewriteRule in htaccess, used during install, upgrade or customcleanurl setting check
      */
     public static function set_htaccess()

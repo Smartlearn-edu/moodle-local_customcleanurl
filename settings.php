@@ -74,6 +74,11 @@ if ($hassiteconfig) {
         $check_rewrite_htaccess = \local_customcleanurl\local\htaccess::check_rewrite_htaccess();
         if (!$check_rewrite_htaccess) {
             $description .= '<div class="alert alert-danger alert-block fade in  alert-dismissible"> change the .htaccess accoding to readme file.</div>';
+        } else {
+            $re_check_rewrite_htaccess = \local_customcleanurl\local\htaccess::check_other_rewrite_rule_htaccess();
+            if (!$re_check_rewrite_htaccess) {
+                $description .= '<div class="alert alert-danger alert-block fade in  alert-dismissible"> Re-change the .htaccess accoding to readme file, as there might be some problem.</div>';
+            }
         }
     }
     $setting = new admin_setting_configcheckbox($name, $title, $description, '0');
