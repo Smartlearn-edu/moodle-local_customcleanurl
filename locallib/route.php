@@ -29,13 +29,13 @@ global $CFG, $PAGE;
 $url = $_SERVER['REQUEST_URI']; // $url = $PAGE->url->raw_out(false); //
 $url_path = parse_url($url, PHP_URL_PATH); // $url_path = $PAGE->url->get_path(false); //
 $url_query = ($url_query = parse_url($url, PHP_URL_QUERY)) ? '?' . $url_query : ''; // $url_query = $PAGE->url->params(); //
-\local_customcleanurl\local\helper::urlrewriteclass_initialize();
+\local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
 
 
 /**
  * check if clean url is present 
  */
-$moodle_default_url = \local_customcleanurl\local\helper::get_default_url();
+$moodle_default_url = \local_customcleanurl\local\UtilCleanUrlHelper::get_default_moodle_url();
 if ($moodle_default_url) {
     $file = $moodle_default_url->out_omit_querystring();
     if (strpos($file, $CFG->wwwroot) === 0) {
@@ -52,23 +52,6 @@ if ($moodle_default_url) {
         die();
     }
 }
-
-/**
- * check if new path and file exist or not
- */
-$get_file_exists = false;
-$route_define = get_cleanurl_define_route();
-foreach ($route_define as $new_path => $actual_path) {
-    if (($url_path == $new_path) || ($url_path == $new_path . '/')) {
-        $filepath = $CFG->dirroot . $actual_path;
-        if (file_exists($filepath)) {
-            chdir(dirname($filepath));
-            require($filepath);
-            die();
-        }
-    }
-}
-
 
 /**
  * directory as path 

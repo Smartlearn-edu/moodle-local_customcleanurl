@@ -51,7 +51,8 @@ class url_rewriter implements \core\output\url_rewriter
     {
         global $CFG;
         if (empty($CFG->upgraderunning)) {
-            return \local_customcleanurl\local\helper::get_clean_url($url);
+            $clean_url = new \local_customcleanurl\local\clean_url($url);
+            return $clean_url->cleanedurl;
         }
         return $url;
     }
@@ -66,6 +67,7 @@ class url_rewriter implements \core\output\url_rewriter
      */
     public static function html_head_setup()
     {
+        return '';
         $emable_customcleanurl = get_config('local_customcleanurl', 'emable_customcleanurl');
         if ($emable_customcleanurl) {
             global $CFG, $PAGE;

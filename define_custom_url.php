@@ -58,7 +58,7 @@ if (!has_capability('moodle/site:config', $context)) {
 } else {
 
     $emable_customcleanurl = get_config('local_customcleanurl', 'emable_customcleanurl');
-    $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_options');
+    $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_type');
     $cleanurl_options = explode(",", $cleanurl_options);
     if (in_array('define_url', $cleanurl_options) && $emable_customcleanurl) {
 
@@ -71,7 +71,7 @@ if (!has_capability('moodle/site:config', $context)) {
         if ($define_custom_url_form->is_cancelled()) {
             redirect($url);
         } else if ($form_data = $define_custom_url_form->get_data()) {
-            \local_customcleanurl\form\custom_url_form::data_save($form_data);
+            \local_customcleanurl\form\custom_url_form::data_save($form_data, 'define_url');
         } else {
             if ($action && $id) {
                 // verify sesskey

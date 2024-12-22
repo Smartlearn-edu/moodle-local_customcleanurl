@@ -66,7 +66,7 @@ class htaccess
             if (file_exists($htaccess_file_path)) {
                 $contents = file_get_contents($htaccess_file_path);
                 $wordCount = substr_count(strtolower($contents), strtolower('RewriteRule'));
-                return ($wordCount == '1') ? true : false;
+                return ($wordCount == '2') ? true : false;
             } else {
                 return false;
             }
@@ -159,6 +159,7 @@ class htaccess
 RewriteEngine On
 # All relative URLs are based from root
 RewriteBase /
+RewriteRule ^index\.php$ - [L]
 # Do not change URLs that point to an existing file and directory.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

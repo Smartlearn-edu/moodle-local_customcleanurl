@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 function local_customcleanurl_before_http_headers()
 {
-    \local_customcleanurl\local\helper::urlrewriteclass_initialize();
+    \local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
 }
 
 
@@ -44,7 +44,7 @@ function local_customcleanurl_before_http_headers()
  */
 function local_customcleanurl_after_config()
 {
-    \local_customcleanurl\local\helper::urlrewriteclass_initialize();
+    \local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
 }
 
 // 
@@ -75,33 +75,6 @@ function local_customcleanurl_after_config()
  */
 function local_customcleanurl_set_htaccess()
 {
-
     \local_customcleanurl\local\htaccess::set_htaccess();
     set_config('set_htaccess', '0', 'local_customcleanurl');
-
-    purge_all_caches();
-}
-
-
-/**
- * @return array 
- */
-function get_cleanurl_define_route()
-{
-
-    $routes = [
-        '/category' => '/theme/skilllab/pages/category/index.php',
-        '/category/edit' => '/theme/skilllab/pages/category/edit.php',
-        '/category/delete' => '/theme/skilllab/pages/category/delete.php',
-        '/lms-admin-login' => '/theme/skilllab/pages/login/admin-login.php',
-        '/logout' => '/theme/skilllab/pages/login/csc-lms-logout.php',
-        '/course/delete' => '/theme/skilllab/pages/course/delete.php',
-        '/view-certificate' => '/theme/skilllab/pages/view-certificate.php',
-        '/time-track-report' => '/theme/skilllab/pages/report/time_track.php',
-        '/student-course-report' => '/theme/skilllab/pages/report/index.php',
-        '/scholarship' => '/theme/skilllab/pages/scholarship/index.php',
-        '/career_road_map' => '/theme/skilllab/pages/career_road_map/index.php'
-    ];
-
-    return $routes;
 }

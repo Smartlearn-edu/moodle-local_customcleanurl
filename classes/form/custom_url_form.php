@@ -187,28 +187,34 @@ class custom_url_form extends \moodleform
     /**
      * save custom_url_form data
      * @param object $data
+     * @param string $cleanurl_type
      */
-    public static function data_save($data)
+    public static function data_save($data, $cleanurl_type = 'define_url')
     {
-        global $DB;
+        global $DB, $CFG;
+        $status = false;
         $url = new moodle_url('/local/customcleanurl/define_custom_url.php');
         // Form was submitted and validated, process the data
         $message = "Error on submit";
         $db_table = 'local_customcleanurl';
+        $data->cleanurl_type = $cleanurl_type;
+        $data->default_url = str_replace($CFG->wwwroot, '', $data->default_url);
+        $data->custom_url = str_replace($CFG->wwwroot, '', $data->custom_url);
+
         if ($data->id && ($data->action == 'edit')) {
             $data_exists = $DB->record_exists($db_table, ['id' =>  $data->id]);
             if ($data_exists) {
                 $data->timemodified = time();
-                $updated =  $DB->update_record($db_table, $data);
-                if ($updated) {
+                $status =  $DB->update_record($db_table, $data);
+                if ($status) {
                     $message = "Data is sucesfully updated.";
                 }
             }
         } else {
             $data->timecreated = time();
             $data->timemodified = time();
-            $saved = $DB->insert_record($db_table, $data);
-            if ($saved) {
+            $status = $DB->insert_record($db_table, $data);
+            if ($status) {
                 $message = "Data is sucesfully saved.";
             }
         }

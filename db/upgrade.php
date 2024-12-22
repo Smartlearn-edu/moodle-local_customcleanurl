@@ -42,6 +42,7 @@ function xmldb_local_customcleanurl_upgrade($oldversion)
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('default_url', XMLDB_TYPE_CHAR, '225', null, XMLDB_NOTNULL, null, null);
         $table->add_field('custom_url', XMLDB_TYPE_CHAR, '225', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('cleanurl_type', XMLDB_TYPE_CHAR, '225', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 

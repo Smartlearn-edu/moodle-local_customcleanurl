@@ -51,38 +51,17 @@ if ($hassiteconfig) {
     $title = "Enable Customcleanurl";
     $description = '';
     if ($emable_customcleanurl) {
-        $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_options');
-        $cleanurl_options = explode(",", $cleanurl_options);
-        if (in_array('course_url', $cleanurl_options)) {
-            $moodle_default_url = new moodle_url('/course/view.php', ['id' => $COURSE->id]);
-            $clean_url = new moodle_url('/course' . $COURSE->short_name);
-        }
-        if (in_array('user_url', $cleanurl_options)) {
-            // http://moodle.local/user/profile.php?id=2
-            // http://moodle.local/user/profile/admin
-            $moodle_default_url = new moodle_url('/user/profile.php', ['id' => $USER->id]);
-            $clean_url = new moodle_url('/user/profile/' . $USER->username);
-        }
-
-        if (array_intersect(['user_url', 'course_url'], $cleanurl_options)) {
-            $moodle_default_clean_url = \local_customcleanurl\local\helper::get_clean_url($moodle_default_url);
-            if ($moodle_default_clean_url->raw_out(false) != $clean_url->raw_out(false)) {
-                $description .= '<div class="alert alert-danger alert-block fade in  alert-dismissible">
-             Clean url cannot be implemented, see the developer and readme file. </div>';
-            }
-        }
         $check_rewrite_htaccess = \local_customcleanurl\local\htaccess::check_rewrite_htaccess();
         if (!$check_rewrite_htaccess) {
             $description .= '<div class="alert alert-danger alert-block fade in  alert-dismissible"> change the .htaccess accoding to readme file.</div>';
         } else {
             $re_check_rewrite_htaccess = \local_customcleanurl\local\htaccess::check_other_rewrite_rule_htaccess();
             if (!$re_check_rewrite_htaccess) {
-                $description .= '<div class="alert alert-danger alert-block fade in  alert-dismissible"> Re-change the .htaccess accoding to readme file, as there might be some problem.</div>';
+                $description .= '<div class="alert alert-danger alert-block fade in  alert-dismissible">Re-change the .htaccess accoding to readme file, as there might be some changes. <br><strong>IGNORE</strong> if you have made the changes.</div>';
             }
         }
     }
     $setting = new admin_setting_configcheckbox($name, $title, $description, '0');
-    $setting->set_updatedcallback('purge_all_caches');
     $settings->add($setting);
 
     /**
@@ -111,16 +90,15 @@ if ($hassiteconfig) {
             'define_url' => 'Define Custom URL'
         );
         $default_values = [
-            'course_url' => 0, // Selected
-            'user_url' => 0, // Not selected
-            'define_url' => 1, // Selected
+            'course_url' => 0,
+            'user_url' => 0,
+            'define_url' => 1,
         ];
-        $name = 'local_customcleanurl/cleanurl_options';
-        $title = 'Custom URL Options';
+        $name = 'local_customcleanurl/cleanurl_type';
+        $title = 'Custom URL Type';
         $description = get_string('cleanurl_options_desc', 'local_customcleanurl');
         $setting = new admin_setting_configmulticheckbox($name, $title, $description, $default_values, $checkbox_options);
         // $setting = new admin_setting_configmultiselect($name, $title, $description, array(), $checkbox_options );
-        $setting->set_updatedcallback('purge_all_caches');
         $settings->add($setting);
     }
     // 
@@ -128,7 +106,7 @@ if ($hassiteconfig) {
 
     // -----------------
     // External link
-    $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_options');
+    $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_type');
     $cleanurl_options = explode(",", $cleanurl_options);
     if (in_array('define_url', $cleanurl_options) && $emable_customcleanurl) {
         $external_link = new moodle_url('/local/customcleanurl/define_custom_url.php');

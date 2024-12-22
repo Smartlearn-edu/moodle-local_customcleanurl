@@ -25,7 +25,7 @@
 
 namespace local_customcleanurl\local;
 
-use local_customcleanurl\local\helper;
+use local_customcleanurl\local\UtilCleanUrlHelper;
 use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
@@ -44,7 +44,7 @@ class clean_url
     /** @var moodle_url */
     private $originalurl;
 
-    /** @var string[] */
+    /** @var array [] */
     private $params;
 
     /** @var string */
@@ -74,13 +74,6 @@ class clean_url
         if (!$emable_customcleanurl || empty($emable_customcleanurl)) {
             return;
         }
-        // check the cache
-        $cache_clean_url = \local_customcleanurl\local\helper::check_clean_url_cached($this->originalurl);
-        if ($cache_clean_url) {
-            $this->cleanedurl = $cache_clean_url;
-            return;
-        }
-        // 
         $this->clean_path();
         $this->create_cleaned_url();
     }
@@ -121,8 +114,7 @@ class clean_url
                 return; // URL was not rewritten. return original url
             }
             // 
-            $this->cleanedurl = new moodle_url($this->path);
-            \local_customcleanurl\local\helper::set_url_cache($this->originalurl, $this->cleanedurl);
+            $this->cleanedurl = new moodle_url($this->path, $this->params);
             return;
         }
     }
@@ -131,16 +123,35 @@ class clean_url
     /** process to claan the default moodle url path */
     private function clean_path()
     {
-        $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_options');
-        $cleanurl_options = explode(",", $cleanurl_options);
-        if (in_array('course_url', $cleanurl_options)) {
+        global $DB;
+        $cleanurl_type = get_config('local_customcleanurl', 'cleanurl_type');
+        $cleanurl_type = explode(",", $cleanurl_type);
+
+        /**
+         * For cleanurl_type = define_url 
+         */
+        if (in_array('define_url', $cleanurl_type)) {
+            $check_custom_url_path = $DB->get_record('local_customcleanurl', ['default_url' => $this->path]);
+            if ($check_custom_url_path) {
+                $this->path = $check_custom_url_path->custom_url;
+            }
+        }
+
+        /**
+         * For cleanurl_type = course_url
+         */
+        if (in_array('course_url', $cleanurl_type)) {
             // url path start with /course
             if (preg_match('#^/course#', $this->path, $matches)) {
                 $this->clean_course_url();
                 return;
             }
         }
-        if (in_array('user_url', $cleanurl_options)) {
+
+        /**
+         * For cleanurl_type = user_url
+         */
+        if (in_array('user_url', $cleanurl_type)) {
             // url path start with /course
             if (preg_match('#^/user/profile.php#', $this->path, $matches)) {
                 $this->clean_users_profile_url();
@@ -163,13 +174,13 @@ class clean_url
     /**
      * Used to convert following urls
      * 
-     * /course/view.php => /course/course_short_shortname
+     * /course/view.php?id={ID} => /course/{course_short_shortname}
      * 
-     * /course/edit.php => /course/edit/course_short_shortname
+     * /course/edit.php?id={ID} => /course/edit/{course_short_shortname}
      * 
      * /course/index.php = > /course
      * 
-     * /course/index.php?categoryid=ID =>/course/category/category_name-ID
+     * /course/index.php?categoryid={ID} =>/course/category/{ID}/{category_name}
      * 
      */
     private function clean_course_url()
@@ -182,6 +193,7 @@ class clean_url
         if (!in_array($this->path, $allowed_course_path)) {
             return;
         }
+        global $DB;
 
         // params
         $course_id = isset($this->params['id']) ? $this->params['id'] : '';
@@ -189,18 +201,17 @@ class clean_url
         // filter paths
         $clean_newpath = $this->remove_index_php('/view.php');
         if ($course_id) {
-            $course = get_course($course_id);
+            $course = $DB->get_record('course', ['id' => $course_id]);
             if ($course) {
-                $clean_newpath = $clean_newpath . '/' . helper::url_slug($course->shortname);
+                $clean_newpath = $clean_newpath . '/' . urlencode($course->shortname);
                 if ($this->check_path_allowed($clean_newpath)) {
                     $this->path = $clean_newpath;
                 }
             }
         } else if ($category_id) {
-            global $DB;
             $course_categories = $DB->get_record('course_categories', ['id' => $category_id]);
             if ($course_categories) {
-                $clean_newpath = $clean_newpath . '/category/' . $course_categories->id . '/' . helper::url_slug($course_categories->name);
+                $clean_newpath = $clean_newpath . '/category/' . $course_categories->id . '/' . urlencode(strtolower($course_categories->name));
                 if ($this->check_path_allowed($clean_newpath)) {
                     $this->path = $clean_newpath;
                 }
@@ -214,6 +225,7 @@ class clean_url
 
     /**
      * clean user profile url 
+     * /user/profile.php?id={ID}  => /user/profile/{username}
      */
     private function clean_users_profile_url()
     {
