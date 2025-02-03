@@ -76,4 +76,14 @@ class hook_callbacks
     //         return;
     //     }
     // }
+
+    /**
+	 * Callback allowing to add contetnt inside the region-main, in the very end
+	 *
+	 * @param \core\hook\after_config $hook
+	 */
+	public static function after_config(\core\hook\after_config $hook): void
+	{
+        \local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
+	}
 }

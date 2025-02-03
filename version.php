@@ -43,4 +43,4 @@ $plugin->maturity = MATURITY_STABLE;
 $plugin->requires = 2023041800;
 
 // This is the release of Moodle this plugin requires.
-$plugin->supported = [402, 404];
+$plugin->supported = [402, 405];
