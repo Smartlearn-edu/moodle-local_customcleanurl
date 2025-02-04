@@ -46,9 +46,9 @@ class UtilCleanUrlHelper
     public static function get_default_moodle_url()
     {
         global $DB;
-        // check emable_customcleanurl
-        $emable_customcleanurl = get_config('local_customcleanurl', 'emable_customcleanurl');
-        if (!$emable_customcleanurl || empty($emable_customcleanurl)) {
+        // check enable_customcleanurl
+        $enable_customcleanurl = get_config('local_customcleanurl', 'enable_customcleanurl');
+        if (!$enable_customcleanurl || empty($enable_customcleanurl)) {
             return;
         }
         $request_url =  $_SERVER['REQUEST_URI'];

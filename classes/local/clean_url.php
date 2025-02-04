@@ -69,9 +69,9 @@ class clean_url
      */
     private function execute()
     {
-        // check emable_customcleanurl
-        $emable_customcleanurl = get_config('local_customcleanurl', 'emable_customcleanurl');
-        if (!$emable_customcleanurl || empty($emable_customcleanurl)) {
+        // check enable_customcleanurl
+        $enable_customcleanurl = get_config('local_customcleanurl', 'enable_customcleanurl');
+        if (!$enable_customcleanurl || empty($enable_customcleanurl)) {
             return;
         }
         $this->clean_path();

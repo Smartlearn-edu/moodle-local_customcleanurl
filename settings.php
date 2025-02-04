@@ -42,15 +42,15 @@ if ($hassiteconfig) {
      * 
      */
     $check_rewrite_htaccess = '';
-    $emable_customcleanurl = get_config('local_customcleanurl', 'emable_customcleanurl');
+    $enable_customcleanurl = get_config('local_customcleanurl', 'enable_customcleanurl');
 
     /**
      * 
      */
-    $name = 'local_customcleanurl/emable_customcleanurl';
+    $name = 'local_customcleanurl/enable_customcleanurl';
     $title = "Enable Customcleanurl";
     $description = '';
-    if ($emable_customcleanurl) {
+    if ($enable_customcleanurl) {
         $check_rewrite_htaccess = \local_customcleanurl\local\htaccess::check_rewrite_htaccess();
         if (!$check_rewrite_htaccess) {
             $description .= '<div class="alert alert-danger alert-block fade in  alert-dismissible"> change the .htaccess accoding to readme file.</div>';
@@ -67,7 +67,7 @@ if ($hassiteconfig) {
     /**
      * 
      */
-    if ($emable_customcleanurl) {
+    if ($enable_customcleanurl) {
 
         /**
          * 
@@ -108,7 +108,7 @@ if ($hassiteconfig) {
     // External link
     $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_type');
     $cleanurl_options = explode(",", $cleanurl_options);
-    if (in_array('define_url', $cleanurl_options) && $emable_customcleanurl) {
+    if (in_array('define_url', $cleanurl_options) && $enable_customcleanurl) {
         $external_link = new moodle_url('/local/customcleanurl/define_custom_url.php');
         $ADMIN->add('customcleanurl_settings', new admin_externalpage(
             'local_define_custom_url', // Unique identifier

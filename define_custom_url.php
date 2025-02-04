@@ -57,10 +57,10 @@ if (!has_capability('moodle/site:config', $context)) {
     $contents .= "<a href='/'> Return Back</a>";
 } else {
 
-    $emable_customcleanurl = get_config('local_customcleanurl', 'emable_customcleanurl');
+    $enable_customcleanurl = get_config('local_customcleanurl', 'enable_customcleanurl');
     $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_type');
     $cleanurl_options = explode(",", $cleanurl_options);
-    if (in_array('define_url', $cleanurl_options) && $emable_customcleanurl) {
+    if (in_array('define_url', $cleanurl_options) && $enable_customcleanurl) {
 
         /**
          * ========================================================

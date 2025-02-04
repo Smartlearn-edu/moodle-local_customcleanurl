@@ -68,8 +68,8 @@ class url_rewriter implements \core\output\url_rewriter
     public static function html_head_setup()
     {
         return '';
-        $emable_customcleanurl = get_config('local_customcleanurl', 'emable_customcleanurl');
-        if ($emable_customcleanurl) {
+        $enable_customcleanurl = get_config('local_customcleanurl', 'enable_customcleanurl');
+        if ($enable_customcleanurl) {
             global $CFG, $PAGE;
             $clean_url = $PAGE->url->out(false);
             $output = '';
