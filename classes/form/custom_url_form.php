@@ -236,7 +236,7 @@ class custom_url_form extends \moodleform
         if ($data) {
             $delete =  $DB->delete_records($db_table, ['id' => $data->id]);
             if ($delete) {
-                $message = "DAta successfully deleted.";
+                $message = "Data successfully deleted.";
             } else {
                 $message = "Error on delete";
             }

@@ -58,7 +58,6 @@ class UtilCleanUrlHelper
         $parts = explode("/", trim($request_path, '/'));
         $unique_name = urldecode(end($parts));
         $response_path = '';
-        self::check_restricted_param();
 
         $cleanurl_type = get_config('local_customcleanurl', 'cleanurl_type');
         $cleanurl_type = explode(",", $cleanurl_type);
@@ -106,8 +105,15 @@ class UtilCleanUrlHelper
          * response_path
          */
         if ($response_path) {
+            $request_param = $request_moodle_url->params();
             $url = new moodle_url($response_path);
             foreach ($url->params() as $k => $v) {
+                if (array_key_exists($k, $request_param)) {
+                    if (isset($_GET[$k])) {
+                        echo "parameter \"" . $k . "\" is restricted as this parameter is alrady present in original url (" . $response_path . ").";
+                        die;
+                    }
+                }
                 $v = str_replace('+', ' ', $v);
                 $_GET[$k] = $v;
             }
@@ -116,19 +122,6 @@ class UtilCleanUrlHelper
         return false;
     }
 
-
-    // check_restricted_param
-    public static function check_restricted_param()
-    {
-        if (isset($_GET['id'])) {
-            echo "GET id parameter is restricted in this url";
-            die;
-        }
-        if (isset($_GET['categoryid'])) {
-            echo "GET categoryid parameter is restricted in this url";
-            die;
-        }
-    }
 
 
     // urlrewriteclass initialize
