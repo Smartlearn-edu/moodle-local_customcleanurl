@@ -23,8 +23,6 @@
  * 
  */
 
-use core\output\html_writer;
-
 // Get require config file.
 require_once(dirname(__FILE__) . '/../../config.php');
 
@@ -54,7 +52,5 @@ $PAGE->add_body_class($strcssclass);
 
 // output content
 echo $OUTPUT->header();
-echo html_writer::start_tag('div', ['class' => 'local_customcleanurl-404 mt-4 mb-4']);
-echo html_writer::tag('p', get_string('errorpage404', 'local_customcleanurl'));
-echo html_writer::end_tag('div');
+echo $OUTPUT->render_from_template('local_customcleanurl/404',[]);
 echo $OUTPUT->footer();

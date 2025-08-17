@@ -109,6 +109,8 @@ class customcleanurl_form extends \moodleform {
 
             if (is_file($clean_url_file)) {
                 $errors['custom_url'] = get_string('error_custom_url_is_default', 'local_customcleanurl', $a);
+            } else if (is_dir($clean_url_file)) {
+                $errors['custom_url'] = get_string('error_default_url_alrady_clean', 'local_customcleanurl', $a);
             } else if (strpos($clean_url->get_path(false), '/') != 0) {
                 $errors['custom_url'] = get_string('error_custom_url_path', 'local_customcleanurl', $a);
             } else if ($clean_url->get_host() != (new moodle_url($CFG->wwwroot))->get_host()) {
