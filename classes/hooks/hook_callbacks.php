@@ -28,8 +28,6 @@ namespace local_customcleanurl\hooks;
 defined('MOODLE_INTERNAL') || die();
 
 use core\hook\output\before_http_headers;
-use local_customcleanurl\local\UtilCleanUrlHelper;
-use moodle_url;
 
 /**
  * Hook callbacks for local_customcleanurl
@@ -58,24 +56,6 @@ class hook_callbacks
         \local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
     }
 
-
-    // /**
-    //  * Callback allowing to after_course_updated
-    //  *
-    //  * @param \core_course\hook\after_course_updated $hook
-    //  */
-    // public static function after_course_updated(\core_course\hook\after_course_updated $hook): void
-    // {
-    //     global $CFG;
-    //     if (during_initial_install() || isset($CFG->upgraderunning)) {
-    //         // Do nothing during installation or upgrade.
-    //         return;
-    //     }
-    //     if ($hook->course->shortname == $hook->oldcourse->shortname) {
-    //         // Do nothing if old and new short name is same
-    //         return;
-    //     }
-    // }
 
     /**
 	 * Callback allowing to add contetnt inside the region-main, in the very end

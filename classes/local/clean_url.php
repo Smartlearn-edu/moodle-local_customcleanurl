@@ -25,7 +25,6 @@
 
 namespace local_customcleanurl\local;
 
-use local_customcleanurl\local\UtilCleanUrlHelper;
 use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
@@ -158,17 +157,7 @@ class clean_url
                 return;
             }
         }
-        // switch ($this->path) {
-        //     case '/user/profile.php':
-        //         // user profile clean url
-        //         $this->clean_users_profile_url();
-        //         return;
-        // }
-        // // course mod activity and resources
-        // if (preg_match('#^/mod/(\w+)/view.php$#', $this->path, $matches)) {
-        //     // clean_course_module_view($matches[1]);
-        //     return;
-        // }
+
     }
 
     /**

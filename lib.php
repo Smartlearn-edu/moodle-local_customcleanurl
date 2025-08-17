@@ -47,28 +47,6 @@ function local_customcleanurl_after_config()
     \local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
 }
 
-// 
-/**
- * 
- */
-// function local_customcleanurl_before_standard_html_head()
-// {
-// }
-
-/**
- * @return string
- */
-// function local_customcleanurl_render_navbar_output()
-// {
-// }
-
-/**
- * Callback allowing to add contetnt inside the region-main, in the very end
- *
- * @return string
- */
-// function local_customcleanurl_before_footer() {}
-
 
 /**
  * 

@@ -6,9 +6,9 @@
     <TABLE NAME="local_customcleanurl" COMMENT="local_customcleanurl table from MySQL">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="default_url" TYPE="char" LENGTH="225" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="custom_url" TYPE="char" LENGTH="225" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="cleanurl_type" TYPE="char" LENGTH="225" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="default_url" TYPE="char" LENGTH="150" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="custom_url" TYPE="char" LENGTH="150" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="cleanurl_type" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>

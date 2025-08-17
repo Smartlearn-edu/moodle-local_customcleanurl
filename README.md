@@ -27,9 +27,9 @@ RewriteBase /
 # Do not change URLs that point to an existing file and directory.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ /local/customcleanurl/locallib/route.php [L]
-ErrorDocument 403 /local/customcleanurl/locallib/404.php
-ErrorDocument 404 /local/customcleanurl/locallib/404.php
+RewriteRule ^(.*)$ /local/customcleanurl/route.php [L]
+ErrorDocument 403 /local/customcleanurl/404.php
+ErrorDocument 404 /local/customcleanurl/404.php
 </IfModule>
 # DO NOT EDIT route
 
@@ -50,9 +50,3 @@ Options -Indexes
 ## Screenshot
 ![Clean custom url setting](./pix/screenshot_custom_clean_settings.png)
 ![Define custom url](./pix/screenshot_define_moodle_custom_url.png)
-
-## Reference : 
-1. https://moodledev.io/docs/4.5/apis/core/hooks
-2. https://docs.moodle.org/dev/Callbacks 
-3. https://phpdoc.moodledev.io/main/d4/dbf/interfacecore_1_1output_1_1url__rewriter.html
-4. https://github.com/brendanheywood/moodle-local_cleanurls

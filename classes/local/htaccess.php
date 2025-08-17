@@ -109,7 +109,6 @@ class htaccess
      */
     public static function unset_htaccess()
     {
-        // require_once(dirname(__FILE__) . '/../../../../config.php');
         global $CFG;
         $htaccess_file_path = $CFG->dirroot . '/.htaccess';
         try {

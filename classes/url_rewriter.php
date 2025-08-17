@@ -34,7 +34,6 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package    local_customcleanurl
  * @copyright  2025 santoshtmp <https://santoshmagar.com.np/>
- * @copyright  based on work by Brendan Heywood <brendan@catalyst-au.net> https://github.com/brendanheywood/moodle-local_cleanurls
  * @author     santoshtmp
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

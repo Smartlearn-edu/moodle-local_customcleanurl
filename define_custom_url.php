@@ -23,95 +23,82 @@
  * 
  */
 
+use core\exception\moodle_exception;
+use core\output\html_writer;
+use local_customcleanurl\handler\customcleanurl_handler;
 
-
-// Require config.
+// Get require config file.
 require_once(dirname(__FILE__) . '/../../config.php');
 defined('MOODLE_INTERNAL') || die();
 
 // Get parameter
 $id = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_TEXT);
-// Get system context.
 $context = \context_system::instance();
 
-// Prepare the page information.
-$url = new moodle_url('/local/customcleanurl/define_custom_url.php');
-$page_title = 'Define Custom URL';
+// Access checks and validate.
+require_login(null, false);
+if (!has_capability('moodle/site:config', $context)) {
+    throw new moodle_exception('invalidaccess', 'local_customcleanurl');
+}
+$enable_customcleanurl = (int)get_config('local_customcleanurl', 'enable_customcleanurl');
+$cleanurl_options = get_config('local_customcleanurl', 'cleanurl_type');
+$cleanurl_options = explode(",", $cleanurl_options);
+if (!(in_array('define_url', $cleanurl_options) && $enable_customcleanurl)) {
+    throw new moodle_exception('featureisnotenable', 'local_customcleanurl');
+}
+
+// Prepare the page information. 
+$page_url = new moodle_url('/local/customcleanurl/define_custom_url.php');
+$page_title = get_string('define_custom_url', 'local_customcleanurl');
+
+// setup page information.
 $PAGE->set_context($context);
-$PAGE->set_url($url);
-$PAGE->set_pagelayout('admin'); // admin , standard , ...
+$PAGE->set_url($page_url);
+$PAGE->set_pagelayout('admin');
 $PAGE->set_pagetype('define_custom_url');
 $PAGE->set_title($page_title);
 $PAGE->set_heading($page_title);
-// $PAGE->navbar->add($page_title);
+$PAGE->navbar->add($page_title);
 $PAGE->set_blocks_editing_capability('moodle/site:manageblocks');
-// 
 $PAGE->requires->jquery();
 
-// Access checks.
-require_login();
-if (!has_capability('moodle/site:config', $context)) {
-    $contents = "You don't have permission to access this pages";
-    $contents .= "<br>";
-    $contents .= "<a href='/'> Return Back</a>";
+// FORM actions
+$define_custom_url_form = new \local_customcleanurl\form\customcleanurl_form();
+if ($define_custom_url_form->is_cancelled()) {
+    redirect($page_url);
+} else if ($form_data = $define_custom_url_form->get_data()) {
+    customcleanurl_handler::save_data($form_data, $page_url, 'define_url');
 } else {
-
-    $enable_customcleanurl = get_config('local_customcleanurl', 'enable_customcleanurl');
-    $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_type');
-    $cleanurl_options = explode(",", $cleanurl_options);
-    if (in_array('define_url', $cleanurl_options) && $enable_customcleanurl) {
-
-        /**
-         * ========================================================
-         *     FORM actions
-         * ========================================================
-         */
-        $define_custom_url_form = new \local_customcleanurl\form\custom_url_form();
-        if ($define_custom_url_form->is_cancelled()) {
-            redirect($url);
-        } else if ($form_data = $define_custom_url_form->get_data()) {
-            \local_customcleanurl\form\custom_url_form::data_save($form_data, 'define_url');
-        } else {
-            if ($action && $id) {
-                // verify sesskey
-                $sesskey = required_param('sesskey', PARAM_ALPHANUM);
-                if ($sesskey != sesskey()) {
-                    $message = "Your session key is missing or invalid.";
-                    redirect($url, $message);
-                }
-                // For Delete
-                if ($action == 'delete') {
-                    \local_customcleanurl\form\custom_url_form::data_delete($id);
-                }
-                // For Edit
-                if ($action == 'edit') {
-                    \local_customcleanurl\form\custom_url_form::display_edit($define_custom_url_form, $id);
-                }
-            }
+    if ($action && $id) {
+        // verify sesskey
+        $sesskey = required_param('sesskey', PARAM_ALPHANUM);
+        if ($sesskey != sesskey()) {
+            redirect($page_url, get_string('invalidsesskey', 'local_customcleanurl'));
         }
-        /**
-         * ========================================================
-         *     Get the data and display
-         * ========================================================
-         */
-        $contents = '';
-        $contents .= '<div> <h3> Add new url<h3></div>';
-        $contents .= $define_custom_url_form->render();
-        $contents .= '<br>';
-        $contents .= '<div> <h3> List of custom url<h3></div>';
-        $contents .= \local_customcleanurl\form\custom_url_form::get_custom_url_data_table(50);
-    } else {
-        $contents = "\"Custom Clean URL\" is not enable or \"Custom URL Options\" for \"Define Custom URL\" is not set.";
-        $contents .= "<br>";
-        $contents .= "<a href='/admin/category.php?category=customcleanurl_settings'> Return Back and enable it.</a>";
+        // For Delete
+        if ($action == 'delete') {
+            customcleanurl_handler::delete_data($id, $page_url);
+        }
+        // For Edit
+        if ($action == 'edit') {
+            customcleanurl_handler::edit_form($define_custom_url_form, $id, $page_url);
+        }
     }
 }
-/**
- * ========================================================
- * -------------------  Output Content  -------------------
- * ========================================================
- */
+
+// Get the data and display
+$contents = '';
+$contents .= html_writer::start_tag('div', ['class' => 'add-custom-url-wrapper mt-4 mb-4']);
+$contents .= html_writer::tag('h3', get_string('add_new_url', 'local_customcleanurl'));
+$contents .= $define_custom_url_form->render();
+$contents .= html_writer::end_tag('div');
+$contents .= html_writer::start_tag('div', ['class' => 'custom-url-list-wrapper mt-4 mb-4']);
+$contents .= html_writer::tag('h3', get_string('list_custom_url', 'local_customcleanurl'));
+$contents .= customcleanurl_handler::get_custom_url_data_table(50);
+$contents .= html_writer::end_tag('div');
+
+// Output Content.
 echo $OUTPUT->header();
 echo $contents;
 echo $OUTPUT->footer();

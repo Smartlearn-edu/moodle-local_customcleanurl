@@ -25,12 +25,12 @@
 
 require_once(dirname(__FILE__) . '/../../config.php');
 defined('MOODLE_INTERNAL') || die();
+
 global $CFG, $PAGE;
 $url = $_SERVER['REQUEST_URI']; // $url = $PAGE->url->raw_out(false); //
 $url_path = parse_url($url, PHP_URL_PATH); // $url_path = $PAGE->url->get_path(false); //
 $url_query = ($url_query = parse_url($url, PHP_URL_QUERY)) ? '?' . $url_query : ''; // $url_query = $PAGE->url->params(); //
-\local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
-
+// \local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
 
 /**
  * check if clean url is present 
@@ -88,7 +88,8 @@ if (str_contains($url_path, '.php')) {
 header("HTTP/1.0 404 Not Found");
 http_response_code('404');
 $_SERVER['REDIRECT_STATUS'] = '404';
-$filepath = $CFG->dirroot . '/local/customcleanurl/locallib/404.php';
+$page_path_404 = '/local/customcleanurl/404.php';
+$filepath = $CFG->dirroot . $page_path_404;
 chdir(dirname($filepath));
 require($filepath);
 die();
