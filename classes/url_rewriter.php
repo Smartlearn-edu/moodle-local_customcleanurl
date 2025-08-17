@@ -17,7 +17,7 @@
 /**
  * 
  * @package    local_customcleanurl
- * @copyright  2024 https://santoshmagar.com.np/
+ * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * 
@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * Clean url rewriter
  *
  * @package    local_customcleanurl
- * @copyright  2024 santoshtmp <https://santoshmagar.com.np/>
+ * @copyright  2025 santoshtmp <https://santoshmagar.com.np/>
  * @copyright  based on work by Brendan Heywood <brendan@catalyst-au.net> https://github.com/brendanheywood/moodle-local_cleanurls
  * @author     santoshtmp
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

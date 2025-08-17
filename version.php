@@ -18,7 +18,7 @@
  * Version information for customcleanurl.
  * 
  * @package    local_customcleanurl
- * @copyright  2024 santoshtmp <https://santoshmagar.com.np/>
+ * @copyright  2025 santoshtmp <https://santoshmagar.com.np/>
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * 

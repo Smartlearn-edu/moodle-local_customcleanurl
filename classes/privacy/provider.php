@@ -17,7 +17,7 @@
 /**
  * 
  * @package    local_customcleanurl
- * @copyright  2024 https://santoshmagar.com.np/
+ * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * 
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Privacy Subsystem for local_customcleanurl implementing null_provider.
  *
- * @copyright  2024 https://santoshmagar.com.np/
+ * @copyright  2025 https://santoshmagar.com.np/
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements \core_privacy\local\metadata\null_provider

@@ -17,14 +17,14 @@
 /**
  * 
  * @package    local_customcleanurl
- * @copyright  2024 https://santoshmagar.com.np/
+ * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * 
  */
 
 
-require_once(dirname(__FILE__) . '/../../../config.php');
+require_once(dirname(__FILE__) . '/../../config.php');
 
 global $OUTPUT, $PAGE;
 $url = '/local/customcleanurl/locallib/404.php';

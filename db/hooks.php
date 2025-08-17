@@ -20,7 +20,7 @@
  * https://docs.moodle.org/dev/Callbacks 
  *  
  * @package    local_customcleanurl
- * @copyright  2024 https://santoshmagar.com.np/
+ * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * 
@@ -35,21 +35,6 @@ $callbacks = [
         'callback' => [local_customcleanurl\hooks\hook_callbacks::class, 'before_http_headers'],
         'priority' => 0,
     ],
-    // [
-    //     'hook' => core_course\hook\after_course_updated::class,
-    //     'callback' => [local_customcleanurl\hooks\hook_callbacks::class, 'after_course_updated'],
-    //     'priority' => 0,
-    // ],
-    // [
-    //     'hook' => core\hook\output\before_standard_head_html_generation::class,
-    //     'callback' => [local_customcleanurl\hooks\hook_callbacks::class, 'before_standard_head_html_generation'],
-    //     'priority' => 0,
-    // ],
-    // [
-    //     'hook' => core\hook\output\before_footer_html_generation::class,
-    //     'callback' => 'local_customcleanurl\hooks\hook_callbacks::before_footer_html_generation',
-    //     'priority' => 0,
-    // ],
     [
         'hook' => core\hook\after_config::class,
         'callback' => [local_customcleanurl\hooks\hook_callbacks::class, 'after_config'],

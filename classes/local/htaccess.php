@@ -17,7 +17,7 @@
 /**
  * 
  * @package    local_customcleanurl
- * @copyright  2024 https://santoshmagar.com.np/
+ * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * 
@@ -29,7 +29,7 @@ namespace local_customcleanurl\local;
  * A class to check and modify htaccess file to rewrite the server route
  *
  * @package    local_customcleanurl
- * @copyright  2024 santoshtmp <https://santoshmagar.com.np/>
+ * @copyright  2025 santoshtmp <https://santoshmagar.com.np/>
  * @author     santoshtmp
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -163,9 +163,9 @@ RewriteRule ^index\.php$ - [L]
 # Do not change URLs that point to an existing file and directory.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ /local/customcleanurl/locallib/route.php [L]
-ErrorDocument 403 /local/customcleanurl/locallib/404.php
-ErrorDocument 404 /local/customcleanurl/locallib/404.php
+RewriteRule ^(.*)$ /local/customcleanurl/route.php [L]
+ErrorDocument 403 /local/customcleanurl/404.php
+ErrorDocument 404 /local/customcleanurl/404.php
 </IfModule>
 # DO NOT EDIT route
 

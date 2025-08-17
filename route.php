@@ -17,13 +17,13 @@
 /**
  * 
  * @package    local_customcleanurl
- * @copyright  2024 https://santoshmagar.com.np/
+ * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * 
  */
 
-require_once(dirname(__FILE__) . '/../../../config.php');
+require_once(dirname(__FILE__) . '/../../config.php');
 defined('MOODLE_INTERNAL') || die();
 global $CFG, $PAGE;
 $url = $_SERVER['REQUEST_URI']; // $url = $PAGE->url->raw_out(false); //
