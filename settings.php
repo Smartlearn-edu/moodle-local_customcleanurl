@@ -23,7 +23,7 @@
  * 
  */
 
-use core\output\html_writer;
+use html_writer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,11 +34,11 @@ if ($hassiteconfig) {
     $check_rewrite_htaccess = '';
     $enable_customcleanurl = (int)get_config('local_customcleanurl', 'enable_customcleanurl');
 
-    // Heading.
+    // ... Heading.
     $settings = new admin_settingpage('local_customcleanurl', get_string('pluginname', 'local_customcleanurl'));
     $ADMIN->add('localplugins', $settings);
 
-    // Enable custom clean url
+    // ... Enable custom clean url
     $name = 'local_customcleanurl/enable_customcleanurl';
     $title = get_string('enable_customcleanurl', 'local_customcleanurl');
     $description = '';
@@ -65,7 +65,7 @@ if ($hassiteconfig) {
     $setting = new admin_setting_configcheckbox($name, $title, $description, '0');
     $settings->add($setting);
 
-    // after enable enable_customcleanurl, check route.
+    // ... after enable enable_customcleanurl, check route.
     if ($enable_customcleanurl) {
 
         if (!$check_rewrite_htaccess) {
@@ -77,7 +77,7 @@ if ($hassiteconfig) {
             $settings->add($setting);
         }
 
-        // define custom url type.
+        // ... define custom url type.
         $checkbox_options  = array(
             'course_url' => get_string('course_url', 'local_customcleanurl'),
             'user_url' => get_string('user_url', 'local_customcleanurl'),
@@ -95,7 +95,7 @@ if ($hassiteconfig) {
         $settings->add($setting);
     }
 
-    // define custom url link
+    // ... define custom url link
     $cleanurl_options = get_config('local_customcleanurl', 'cleanurl_type');
     $cleanurl_options = explode(",", $cleanurl_options);
     if (in_array('define_url', $cleanurl_options) && $enable_customcleanurl) {
