@@ -101,7 +101,7 @@ if ($hassiteconfig) {
     $cleanurloptions = explode(",", $cleanurloptions);
     if (in_array('define_url', $cleanurloptions) && $isenablecustomcleanurl) {
         $a = new stdClass();
-        $a->url = (new moodle_url('/local/customcleanurl/define_custom_url.php'))->out();
+        $a->url = (new moodle_url('/local/customcleanurl/define_custom_url.php'))->out(false);
         $settings->add(new admin_setting_heading(
             'local_customcleanurl',
             get_string('define_custom_url', 'local_customcleanurl'),

@@ -213,7 +213,7 @@ class customcleanurl_handler {
                         'id' => $record->id,
                         'sesskey' => sesskey(),
                     ]
-                ))->out();
+                ))->out(false);
                 $deletelink = (new moodle_url(
                     $pagepath,
                     [
@@ -221,7 +221,7 @@ class customcleanurl_handler {
                         'id' => $record->id,
                         'sesskey' => sesskey(),
                     ]
-                ))->out();
+                ))->out(false);
                 $row = [];
                 $row[] = $i;
                 $row[] = $record->default_url;

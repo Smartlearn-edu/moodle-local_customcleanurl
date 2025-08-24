@@ -76,13 +76,14 @@ class helper {
      *                          false if no mapping is found or feature disabled.
      */
     public static function get_default_moodle_url() {
-        global $DB, $OUTPUT;
+        global $DB, $CFG, $OUTPUT;
         if (!self::is_enable_customcleanurl()) {
             return;
         }
-
+        $basepath = (new \moodle_url($CFG->wwwroot))->get_path(false);
         $requestmoodleurl = new moodle_url($_SERVER['REQUEST_URI']);
         $requestpath = $requestmoodleurl->get_path(false);
+        $requestpath = str_replace($basepath, '', $requestpath);
 
         $parts = explode("/", trim($requestpath, '/'));
         $uniquename = urldecode(end($parts));
