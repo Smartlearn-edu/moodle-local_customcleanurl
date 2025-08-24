@@ -16,18 +16,18 @@
 
 /**
  * Version information for customcleanurl.
- * 
+ *
  * @package    local_customcleanurl
  * @copyright  2025 santoshtmp <https://santoshmagar.com.np/>
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * 
+ *
  */
 
 // This line protects the file from being accessed by a URL directly.
 defined('MOODLE_INTERNAL') || die();
 
-// This is the component name of the plugin
+// This is the component name of the plugin.
 $plugin->component = 'local_customcleanurl';
 
 // This is the named version.
@@ -43,4 +43,4 @@ $plugin->maturity = MATURITY_STABLE;
 $plugin->requires = 2023041800;
 
 // This is the release of Moodle this plugin requires.
-$plugin->supported = [404, 405];
+$plugin->supported = [402, 405];

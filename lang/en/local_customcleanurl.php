@@ -16,14 +16,13 @@
 
 /**
  * Language file.
- * 
+ *
  * @package    local_customcleanurl
  * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * 
+ *
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,15 +38,12 @@ $string['list_custom_url'] = "List of custom url";
 $string['forbiddenpage'] = "Forbidden Page";
 $string['pagenotfound'] = "Page Not Found";
 $string['errorpage404'] = "404 error page";
-
-// 
 $string['cachedef_clean_url'] = 'Clean URL Cache';
 $string['cachedef_unclean_url'] = 'Default moodle URL cache';
-
+$string['invalidcustomparam'] = 'Parameter "{$a->param}" is restricted as this parameter is alrady present in original url "{$a->responsepath}"';
 $string['delete_data_heading'] = 'Delete custom url';
 $string['delete_conform_text'] = 'Are you sure you want to delete "{$a->customcleanurl}"?';
 
-// settings
 $string['enable_customcleanurl'] = 'Enable Customcleanurl';
 $string['change_htaccess_as_readme'] = 'Change the .htaccess accoding to readme file.';
 $string['recheck_htaccess_as_readme'] = 'Re-change the .htaccess accoding to readme file, as there might be some changes. <br><strong>IGNORE</strong> if you have made the changes.';
@@ -57,9 +53,9 @@ $string['course_url'] = 'Course URL';
 $string['user_url'] = 'User URL';
 $string['define_custom_url'] = 'Define Custom URL';
 $string['cleanurl_options_desc'] = 'Selected options url will only be modified.
-This will change the default moodle url to clean url. 
-<br> Example: 
-<br> 
+This will change the default moodle url to clean url.
+<br> Example:
+<br>
 <ol>
     <li>Course URL
         <ol>
@@ -80,7 +76,6 @@ This will change the default moodle url to clean url.
 $string['clean_url_type'] = 'Custom URL Type';
 $string['define_custom_urldesc'] = 'Now you can define custom url for the existing moodle url at <a href="/local/customcleanurl/define_custom_url.php">HERE - Define Custom URL</a>.';
 
-// form
 $string['sn'] = 'S.N.';
 $string['default_url'] = 'Default Moodle URL';
 $string['default_url_help'] = 'Default original moodle url. <br> It should be .php url and must start with your_domain or / .<br> Example: your_domain/course/view.php?id=7';
@@ -95,7 +90,6 @@ $string['error_custom_url_path'] = 'Provided path "{$a->custom_url}" must start 
 $string['error_custom_exist'] = 'Provided Custom Clean URL "{$a->custom_url}" is alrady taken.';
 $string['error_custom_url_not_originalurl'] = 'Provided URL "{$a->custom_url}" is not the default original URL.';
 
-// handler
 $string['edit_custom_url_title'] = 'Edit custom url';
 $string['data_saved'] = 'Custom url data is sucesfully saved.';
 $string['data_updated'] = 'Custom url data is sucesfully updated.';

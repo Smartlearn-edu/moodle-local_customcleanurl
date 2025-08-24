@@ -15,16 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * 
+ *
  * @package    local_customcleanurl
  * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
- *  
  */
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * This is called at the beginning of the uninstallation process to give the module
@@ -32,9 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @return bool true if success
  */
-
-function xmldb_local_customcleanurl_uninstall()
-{
+function xmldb_local_customcleanurl_uninstall() {
     \local_customcleanurl\local\htaccess::unset_htaccess();
     return true;
 }

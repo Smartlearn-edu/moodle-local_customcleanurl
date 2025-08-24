@@ -15,12 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * 
+ * Htaccess management helper for local_customcleanurl plugin.
+ *
  * @package    local_customcleanurl
  * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * 
+ *
  */
 
 namespace local_customcleanurl\local;
@@ -33,17 +34,27 @@ namespace local_customcleanurl\local;
  * @author     santoshtmp
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class htaccess
-{
+class htaccess {
 
-    /** check_rewrite_htaccess */
-    public static function check_rewrite_htaccess()
-    {
+    /**
+     * Get absolute path to the `.htaccess` file inside Moodle root.
+     *
+     * @return string Path to .htaccess file.
+     */
+    protected static function get_htaccessfilepath() {
         global $CFG;
-        $htaccess_file_path = $CFG->dirroot . '/.htaccess';
+        return $CFG->dirroot . '/.htaccess';
+    }
+
+    /**
+     * Check if the required rewrite rules exist in `.htaccess`.
+     *
+     * @return bool True if customcleanurl rewrite rules are found, false otherwise.
+     */
+    public static function check_rewrite_htaccess() {
         try {
-            if (file_exists($htaccess_file_path)) {
-                $contents = file_get_contents($htaccess_file_path);
+            if (file_exists(self::get_htaccessfilepath())) {
+                $contents = file_get_contents(self::get_htaccessfilepath());
                 return str_contains($contents, self::get_default_htaccess_content());
             } else {
                 return false;
@@ -52,21 +63,22 @@ class htaccess
         } catch (\Exception $e) {
             return false;
         }
-        return false;
     }
 
     /**
-     * 
+     * Check if there are exactly two RewriteRule entries in `.htaccess`.
+     *
+     * Useful to detect if extra conflicting rules are present.
+     *
+     * @return bool True if exactly two RewriteRules exist, false otherwise.
      */
-    public static function check_other_rewrite_rule_htaccess()
-    {
-        global $CFG;
-        $htaccess_file_path = $CFG->dirroot . '/.htaccess';
+    public static function check_other_rewrite_rule_htaccess() {
+
         try {
-            if (file_exists($htaccess_file_path)) {
-                $contents = file_get_contents($htaccess_file_path);
-                $wordCount = substr_count(strtolower($contents), strtolower('RewriteRule'));
-                return ($wordCount == '2') ? true : false;
+            if (file_exists(self::get_htaccessfilepath())) {
+                $contents = file_get_contents(self::get_htaccessfilepath());
+                $wordcount = substr_count(strtolower($contents), strtolower('RewriteRule'));
+                return ($wordcount == '2') ? true : false;
             } else {
                 return false;
             }
@@ -74,83 +86,94 @@ class htaccess
         } catch (\Exception $e) {
             return false;
         }
-        return false;
     }
 
 
     /**
-     * to set RewriteRule in htaccess, used during install, upgrade or customcleanurl setting check
+     * Set (or update) the required rewrite rules in `.htaccess`.
+     *
+     * Used during install, upgrade, or plugin setting changes.
+     *
+     * @return bool True if rewrite rules were successfully written, false otherwise.
      */
-    public static function set_htaccess()
-    {
-        global $CFG;
-        $htaccess_file_path = $CFG->dirroot . '/.htaccess';
+    public static function set_htaccess() {
+
         try {
-            if (file_exists($htaccess_file_path)) {
-                $contents = file_get_contents($htaccess_file_path);
-                $contents = self::string_except_between_two_string($contents, '# BEGIN_MOODLE_LOCAL_CUSTOMCLEANURL', '# END_MOODLE_LOCAL_CUSTOMCLEANURL');
-                $update_content = $contents . "\n" . self::get_default_htaccess_content();
-                $update_content = trim($update_content);
-                file_put_contents($htaccess_file_path, $update_content);
+            if (file_exists(self::get_htaccessfilepath())) {
+                $contents = file_get_contents(self::get_htaccessfilepath());
+                $contents = self::string_except_between_two_string(
+                    $contents,
+                    '# BEGIN_MOODLE_LOCAL_CUSTOMCLEANURL',
+                    '# END_MOODLE_LOCAL_CUSTOMCLEANURL'
+                );
+                $updatecontent = $contents . "\n" . self::get_default_htaccess_content();
+                $updatecontent = trim($updatecontent);
+                file_put_contents(self::get_htaccessfilepath(), $updatecontent);
             } else {
-                $default_contents = self::get_default_htaccess_content();
-                file_put_contents($htaccess_file_path, $default_contents);
+                $defaultcontents = self::get_default_htaccess_content();
+                file_put_contents(self::get_htaccessfilepath(), $defaultcontents);
             }
             return true;
         } catch (\Exception $e) {
             echo $e->getMessage();
             return false;
         }
-        return false;
     }
 
     /**
-     * To remove RewriteRule in htaccess, during uninstall
+     * Remove the custom rewrite rules from `.htaccess`.
+     *
+     * Used during uninstall or plugin disable.
+     *
+     * @return bool True if rules were successfully removed, false otherwise.
      */
-    public static function unset_htaccess()
-    {
-        global $CFG;
-        $htaccess_file_path = $CFG->dirroot . '/.htaccess';
+    public static function unset_htaccess() {
+
         try {
-            if (file_exists($htaccess_file_path)) {
-                $contents = file_get_contents($htaccess_file_path);
-                $contents = self::string_except_between_two_string($contents, '# BEGIN_MOODLE_LOCAL_CUSTOMCLEANURL', '# END_MOODLE_LOCAL_CUSTOMCLEANURL');
-                $update_content = trim($contents);
-                file_put_contents($htaccess_file_path, $update_content);
+            if (file_exists(self::get_htaccessfilepath())) {
+                $contents = file_get_contents(self::get_htaccessfilepath());
+                $contents = self::string_except_between_two_string(
+                    $contents,
+                    '# BEGIN_MOODLE_LOCAL_CUSTOMCLEANURL',
+                    '# END_MOODLE_LOCAL_CUSTOMCLEANURL'
+                );
+                $updatecontent = trim($contents);
+                file_put_contents(self::get_htaccessfilepath(), $updatecontent);
             }
             return true;
         } catch (\Exception $e) {
             echo $e->getMessage();
             return false;
         }
-        return false;
     }
 
 
     /**
-     * return string 
-     * @param string $content_string
-     * @param string $starting_word
-     * @param string $ending_word
+     * Remove content between two markers inside a string.
+     *
+     * @param string $contentstring The original content.
+     * @param string $startingword The starting marker string.
+     * @param string $endingword The ending marker string.
+     * @return string Cleaned string without the section between markers.
      */
-    private static function string_except_between_two_string($content_string, $starting_word, $ending_word)
-    {
-        $start_pos = ($start_pos = strpos($content_string, $starting_word)) ? $start_pos : 0;
-        $end_pos = strrpos($content_string, $ending_word);
-        if ($end_pos) {
-            $end_pos += strlen($ending_word);
-            $content_string = substr($content_string, 0, $start_pos) . substr($content_string, $end_pos);
+    private static function string_except_between_two_string($contentstring, $startingword, $endingword) {
+        $startpos = ($startpos = strpos($contentstring, $startingword)) ? $startpos : 0;
+        $endpos = strrpos($contentstring, $endingword);
+        if ($endpos) {
+            $endpos += strlen($endingword);
+            $contentstring = substr($contentstring, 0, $startpos) . substr($contentstring, $endpos);
         }
-        return $content_string;
+        return $contentstring;
     }
 
 
     /**
-     * get default htaccess RewriteRule
+     * Get the default `.htaccess` rewrite rules required by this plugin.
+     *
+     * @return string The default rewrite rules block.
      */
-    private static function get_default_htaccess_content()
-    {
-        $default_contents = "
+    private static function get_default_htaccess_content() {
+        return trim("
 # BEGIN_MOODLE_LOCAL_CUSTOMCLEANURL
 # DO NOT EDIT route
 <IfModule mod_rewrite.c>
@@ -158,7 +181,6 @@ class htaccess
 RewriteEngine On
 # All relative URLs are based from root
 RewriteBase /
-RewriteRule ^index\.php$ - [L]
 # Do not change URLs that point to an existing file and directory.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -180,8 +202,7 @@ Options -MultiViews
 Options -Indexes
 
 # END_MOODLE_LOCAL_CUSTOMCLEANURL
-    ";
-        $default_contents = trim($default_contents);
-        return $default_contents;
+
+        ");
     }
 }

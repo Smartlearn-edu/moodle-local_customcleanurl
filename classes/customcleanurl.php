@@ -15,19 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * 
+ *
  * @package    local_customcleanurl
  * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * 
+ *
  */
 
 namespace local_customcleanurl;
 
+use local_customcleanurl\local\helper;
 use moodle_url;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Clean url rewriter
@@ -37,26 +36,23 @@ defined('MOODLE_INTERNAL') || die();
  * @author     santoshtmp
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class url_rewriter implements \core\output\url_rewriter
-{
+class customcleanurl implements \core\output\url_rewriter {
+
     /**
-     * Rewrite moodle_urls into another form. 
+     * Rewrite moodle_urls into another form.
      * By using customcleanurl if not possible.
      *
      * @param \moodle_url $url a url to potentially rewrite
      * @return \moodle_url Returns a new, or the original, moodle_url;
      */
-    public static function url_rewrite(moodle_url $url)
-    {
+    public static function url_rewrite(moodle_url $url) {
         global $CFG;
         if (empty($CFG->upgraderunning)) {
-            $clean_url = new \local_customcleanurl\local\clean_url($url);
-            return $clean_url->cleanedurl;
+            $cleanurl = new \local_customcleanurl\local\clean_url($url);
+            return $cleanurl->cleanedurl;
         }
         return $url;
     }
-
-
 
     /**
      * Gives a url rewriting plugin a chance to rewrite the current page url
@@ -64,29 +60,27 @@ class url_rewriter implements \core\output\url_rewriter
      *
      * @return void
      */
-    public static function html_head_setup()
-    {
+    public static function html_head_setup() {
         return '';
-        $enable_customcleanurl = get_config('local_customcleanurl', 'enable_customcleanurl');
-        if ($enable_customcleanurl) {
+        if (helper::is_enable_customcleanurl()) {
             global $CFG, $PAGE;
-            $clean_url = $PAGE->url->out(false);
+            $cleanurl = $PAGE->url->out(false);
             $output = '';
 
-            if (isset($CFG->moodle_default_url)) {
+            if (isset($CFG->moodledefaulturl)) {
                 // This page came through local customcleanurl route .
-                $output .= self::get_base_href($CFG->moodle_default_url->raw_out(false));
-                $output .= self::get_anchor_fix_javascript($clean_url);
+                $output .= self::get_base_href($CFG->moodledefaulturl->raw_out(false));
+                $output .= self::get_anchor_fix_javascript($cleanurl);
             } else {
                 // This page came through its canonical/legacy address (not clean version).
                 $orig = $PAGE->url->raw_out(false);
-                if ($orig != $clean_url) {
+                if ($orig != $cleanurl) {
                     // This page URL could have been cleaned up, so do it!
                     $output .= self::get_base_href($orig);
-                    $output .= self::get_replacestate_script($clean_url);
-                    $output .= self::get_anchor_fix_javascript($clean_url);
+                    $output .= self::get_replacestate_script($cleanurl);
+                    $output .= self::get_anchor_fix_javascript($cleanurl);
                     $output .= self::get_link_canonical();
-                    self::mark_apache_note($clean_url);
+                    self::mark_apache_note($cleanurl);
                 }
             }
 
@@ -106,8 +100,7 @@ class url_rewriter implements \core\output\url_rewriter
      * @param $clean string
      * @return string
      */
-    private static function get_anchor_fix_javascript($clean)
-    {
+    private static function get_anchor_fix_javascript($clean) {
         return <<<HTML
 <script>
 document.addEventListener('click', function (event) {
@@ -135,8 +128,7 @@ HTML;
      * @param $uncleanedurl string
      * @return string
      */
-    private static function get_base_href($uncleanedurl)
-    {
+    private static function get_base_href($uncleanedurl) {
         return "<base href=\"{$uncleanedurl}\">\n";
     }
 
@@ -152,8 +144,7 @@ HTML;
      * @param $clean string
      * @return string
      */
-    private static function get_replacestate_script($clean)
-    {
+    private static function get_replacestate_script($clean) {
         return "<script>history.replaceState && history.replaceState({}, '', '{$clean}');</script>\n";
     }
 
@@ -166,8 +157,7 @@ HTML;
      * will be shown in google search results pages.
      * @return string
      */
-    private static function get_link_canonical()
-    {
+    private static function get_link_canonical() {
         global $PAGE;
 
         $cleanescaped = $PAGE->url->out(true);
@@ -187,8 +177,7 @@ HTML;
      *
      * @param $clean string
      */
-    private static function mark_apache_note($clean)
-    {
+    private static function mark_apache_note($clean) {
         if (function_exists('apache_note')) {
             apache_note('CLEANURL', $clean);
         }

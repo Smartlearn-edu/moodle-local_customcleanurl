@@ -15,83 +15,82 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * 
+ *
  * @package    local_customcleanurl
  * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * 
+ *
  */
 
-use core\exception\moodle_exception;
-use core\output\html_writer;
 use local_customcleanurl\handler\customcleanurl_handler;
+use local_customcleanurl\local\helper;
 
 // Get require config file.
 require_once(dirname(__FILE__) . '/../../config.php');
+require_once($CFG->libdir . '/adminlib.php');
 defined('MOODLE_INTERNAL') || die();
 
-// Get parameter
+// Get parameter.
 $id = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_TEXT);
 $context = \context_system::instance();
 
-// Access checks and validate.
+// Access checks and Capability check.
 require_login(null, false);
 if (!has_capability('moodle/site:config', $context)) {
     throw new moodle_exception('invalidaccess', 'local_customcleanurl');
 }
-$enable_customcleanurl = (int)get_config('local_customcleanurl', 'enable_customcleanurl');
-$cleanurl_options = get_config('local_customcleanurl', 'cleanurl_type');
-$cleanurl_options = explode(",", $cleanurl_options);
-if (!(in_array('define_url', $cleanurl_options) && $enable_customcleanurl)) {
+$cleanurloptions = get_config('local_customcleanurl', 'cleanurl_type');
+$cleanurloptions = explode(",", $cleanurloptions);
+if (!(in_array('define_url', $cleanurloptions) && helper::is_enable_customcleanurl())) {
     throw new moodle_exception('featureisnotenable', 'local_customcleanurl');
 }
 
-// Prepare the page information. 
-$page_url = new moodle_url('/local/customcleanurl/define_custom_url.php');
-$page_title = get_string('define_custom_url', 'local_customcleanurl');
+// Prepare the page information.
+$pageurl = new moodle_url('/local/customcleanurl/define_custom_url.php');
+$pagetitle = get_string('define_custom_url', 'local_customcleanurl');
 
-// setup page information.
+// Setup page information.
 $PAGE->set_context($context);
-$PAGE->set_url($page_url);
+$PAGE->set_url($pageurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_pagetype('define_custom_url');
-$PAGE->set_title($page_title);
-$PAGE->set_heading($page_title);
-$PAGE->navbar->add($page_title);
+$PAGE->set_title($pagetitle);
+$PAGE->set_heading($pagetitle);
+$PAGE->navbar->add($pagetitle);
 $PAGE->set_blocks_editing_capability('moodle/site:manageblocks');
 $PAGE->requires->jquery();
 
-// FORM actions
-$define_custom_url_form = new \local_customcleanurl\form\customcleanurl_form();
-if ($define_custom_url_form->is_cancelled()) {
-    redirect($page_url);
-} else if ($form_data = $define_custom_url_form->get_data()) {
-    customcleanurl_handler::save_data($form_data, $page_url, 'define_url');
+// FORM actions.
+$definecustomurlform = new \local_customcleanurl\form\customcleanurl_form();
+if ($definecustomurlform->is_cancelled()) {
+    redirect($pageurl);
+} else if ($formdata = $definecustomurlform->get_data()) {
+    customcleanurl_handler::save_data($formdata, $pageurl, 'define_url');
 } else {
     if ($action && $id) {
-        // verify sesskey
+        // Verify sesskey.
         $sesskey = required_param('sesskey', PARAM_ALPHANUM);
         if ($sesskey != sesskey()) {
-            redirect($page_url, get_string('invalidsesskey', 'local_customcleanurl'));
+            redirect($pageurl, get_string('invalidsesskey', 'local_customcleanurl'));
         }
-        // For Delete
+        // For Delete.
         if ($action == 'delete') {
-            customcleanurl_handler::delete_data($id, $page_url);
+            customcleanurl_handler::delete_data($id, $pageurl);
         }
-        // For Edit
+        // For Edit.
         if ($action == 'edit') {
-            customcleanurl_handler::edit_form($define_custom_url_form, $id, $page_url);
+            customcleanurl_handler::edit_form($definecustomurlform, $id, $pageurl);
         }
     }
 }
 
-// Get the data and display
+// Get the data and display.
 $contents = '';
 $contents .= html_writer::start_tag('div', ['class' => 'add-custom-url-wrapper mt-4 mb-4']);
 $contents .= html_writer::tag('h3', get_string('add_new_url', 'local_customcleanurl'));
-$contents .= $define_custom_url_form->render();
+$contents .= $definecustomurlform->render();
 $contents .= html_writer::end_tag('div');
 $contents .= html_writer::start_tag('div', ['class' => 'custom-url-list-wrapper mt-4 mb-4']);
 $contents .= html_writer::tag('h3', get_string('list_custom_url', 'local_customcleanurl'));

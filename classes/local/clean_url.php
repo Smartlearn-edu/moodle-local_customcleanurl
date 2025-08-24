@@ -15,46 +15,48 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * 
+ * Clean URL processor class.
+ *
  * @package    local_customcleanurl
  * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * 
+ *
  */
 
 namespace local_customcleanurl\local;
 
 use moodle_url;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
- * class to clean the default moodle url
+ * Class to clean the default moodle url
+ * Responsible for rewriting Moodle's default URLs into cleaner, human-friendly URLs.
  *
  * @package    local_customcleanurl
  * @copyright  2025 santoshtmp <https://santoshmagar.com.np/>
  * @author     santoshtmp
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class clean_url
-{
+class clean_url {
 
-    /** @var moodle_url */
+    /** @var moodle_url Original Moodle URL before processing. */
     private $originalurl;
 
-    /** @var array [] */
+    /** @var array URL parameters from the original URL. */
     private $params;
 
-    /** @var string */
+    /** @var string Path component of the original URL. */
     private $path;
 
-    /** @var moodle_url */
+    /** @var moodle_url|null Final cleaned URL (or null if not rewritten). */
     public $cleanedurl;
 
-    // constructor
-    public function __construct(moodle_url $url)
-    {
+    /**
+     * Constructor.
+     *
+     * @param moodle_url $url Original Moodle URL to be processed.
+     */
+    public function __construct(moodle_url $url) {
         $this->originalurl = $url;
         $this->path = $this->originalurl->get_path(false);
         $this->params = $this->originalurl->params();
@@ -62,15 +64,13 @@ class clean_url
         $this->execute();
     }
 
-
     /**
-     * execute
+     * Executes the clean URL process if enabled in plugin settings.
+     *
+     * @return void
      */
-    private function execute()
-    {
-        // check enable_customcleanurl
-        $enable_customcleanurl = get_config('local_customcleanurl', 'enable_customcleanurl');
-        if (!$enable_customcleanurl || empty($enable_customcleanurl)) {
+    private function execute() {
+        if (!helper::is_enable_customcleanurl()) {
             return;
         }
         $this->clean_path();
@@ -78,31 +78,39 @@ class clean_url
     }
 
     /**
-     * remove index.php, .php or provided path string
-     * @param string $remove_last_path
+     * Removes unwanted parts from the URL path.
+     *
+     * - Removes a specific path ending if provided.
+     * - Removes `/index.php` if present at the end.
+     * - Removes `.php` extension if present.
+     *
+     * @param string $removelastpath Optional specific suffix to strip.
+     * @return string|null Cleaned path string, or null if no changes made.
      */
-    private function remove_index_php($remove_last_path = '')
-    {
-        // removed defined path from the end
-        if ($remove_last_path) {
-            if (substr($this->path, -strlen($remove_last_path)) == $remove_last_path) {
-                return substr($this->path, 0, -strlen($remove_last_path));
+    private function remove_index_php($removelastpath = '') {
+        // ... removed defined path from the end
+        if ($removelastpath) {
+            if (substr($this->path, -strlen($removelastpath)) == $removelastpath) {
+                return substr($this->path, 0, -strlen($removelastpath));
             }
         }
 
-        // Remove /index.php from end.
+        // ... remove /index.php from end.
         if (substr($this->path, -10) == '/index.php') {
             return substr($this->path, 0, -10);
         }
-        // remove .php
+        // ... remove .php
         if (substr($this->path, -4) == '.php') {
             return substr($this->path, 0, -4);
         }
     }
 
-    // create_cleaned_url after the path is cleaned
-    private function create_cleaned_url()
-    {
+    /**
+     * Generates the final cleaned Moodle URL object.
+     *
+     * @return void
+     */
+    private function create_cleaned_url() {
         // Add back moodle path.
         $this->path = ltrim($this->path, '/');
         if ($this->path) {
@@ -110,99 +118,99 @@ class clean_url
             $originalpath = $this->originalurl->get_path(false);
             if ($this->path == $originalpath) {
                 $this->cleanedurl = $this->originalurl;
-                return; // URL was not rewritten. return original url
+                return; // ... URL was not rewritten. return original url
             }
-            // 
             $this->cleanedurl = new moodle_url($this->path, $this->params);
             return;
         }
     }
 
 
-    /** process to claan the default moodle url path */
-    private function clean_path()
-    {
+    /**
+     * Cleans the URL path depending on the configured clean URL types.
+     *
+     * - define_url: Rewrites URLs defined in custom table.
+     * - course_url: Rewrites course-related URLs.
+     * - user_url: Rewrites user profile URLs.
+     *
+     * @return void
+     */
+    private function clean_path() {
         global $DB;
-        $cleanurl_type = get_config('local_customcleanurl', 'cleanurl_type');
-        $cleanurl_type = explode(",", $cleanurl_type);
+        $cleanurltype = get_config('local_customcleanurl', 'cleanurl_type');
+        $cleanurltype = explode(",", $cleanurltype);
 
-        /**
-         * For cleanurl_type = define_url 
-         */
-        if (in_array('define_url', $cleanurl_type)) {
-            $check_custom_url_path = $DB->get_record('local_customcleanurl', ['default_url' => $this->path]);
-            if ($check_custom_url_path) {
-                $this->path = $check_custom_url_path->custom_url;
+        // For cleanurl_type = define_url.
+        if (in_array('define_url', $cleanurltype)) {
+            $checkcustomurlpath = $DB->get_record('local_customcleanurl', ['default_url' => $this->path]);
+            if ($checkcustomurlpath) {
+                $this->path = $checkcustomurlpath->custom_url;
             }
         }
 
-        /**
-         * For cleanurl_type = course_url
-         */
-        if (in_array('course_url', $cleanurl_type)) {
-            // url path start with /course
+        // For cleanurl_type = course_url.
+        if (in_array('course_url', $cleanurltype)) {
+            // Url path start with /course.
             if (preg_match('#^/course#', $this->path, $matches)) {
                 $this->clean_course_url();
                 return;
             }
         }
 
-        /**
-         * For cleanurl_type = user_url
-         */
-        if (in_array('user_url', $cleanurl_type)) {
-            // url path start with /course
+        // For cleanurl_type = user_url.
+        if (in_array('user_url', $cleanurltype)) {
+            // Url path start with /course.
             if (preg_match('#^/user/profile.php#', $this->path, $matches)) {
                 $this->clean_users_profile_url();
                 return;
             }
         }
-
     }
 
     /**
-     * Used to convert following urls
-     * 
-     * /course/view.php?id={ID} => /course/{course_short_shortname}
-     * 
-     * /course/edit.php?id={ID} => /course/edit/{course_short_shortname}
-     * 
-     * /course/index.php = > /course
-     * 
-     * /course/index.php?categoryid={ID} =>/course/category/{ID}/{category_name}
-     * 
+     * Cleans course-related URLs into user-friendly format.
+     *
+     * Examples:
+     * - /course/view.php?id={ID} → /course/{shortname}
+     * - /course/edit.php?id={ID} → /course/edit/{shortname}
+     * - /course/index.php → /course
+     * - /course/index.php?categoryid={ID} → /course/category/{ID}/{categoryname}
+     *
+     * @return bool False if no match, true if rewritten.
      */
-    private function clean_course_url()
-    {
-        $allowed_course_path = [
+    private function clean_course_url() {
+        $coursepath = [
             '/course/view.php',
             '/course/edit.php',
-            '/course/index.php'
+            '/course/index.php',
         ];
-        if (!in_array($this->path, $allowed_course_path)) {
+        if (!in_array($this->path, $coursepath)) {
             return;
         }
         global $DB;
 
-        // params
-        $course_id = isset($this->params['id']) ? $this->params['id'] : '';
-        $category_id = isset($this->params['categoryid']) ? $this->params['categoryid'] : '';
-        // filter paths
-        $clean_newpath = $this->remove_index_php('/view.php');
-        if ($course_id) {
-            $course = $DB->get_record('course', ['id' => $course_id]);
+        // ... params
+        $courseid = isset($this->params['id']) ? $this->params['id'] : '';
+        $categoryid = isset($this->params['categoryid']) ? $this->params['categoryid'] : '';
+        // ... filter paths
+        $cleannewpath = $this->remove_index_php('/view.php');
+        if ($courseid) {
+            $course = $DB->get_record('course', ['id' => $courseid]);
             if ($course) {
-                $clean_newpath = $clean_newpath . '/' . urlencode($course->shortname);
-                if ($this->check_path_allowed($clean_newpath)) {
-                    $this->path = $clean_newpath;
+                unset($this->params['id']);
+                $cleannewpath = $cleannewpath . '/' . urlencode($course->shortname);
+                if ($this->check_path_allowed($cleannewpath)) {
+                    $this->path = $cleannewpath;
                 }
             }
-        } else if ($category_id) {
-            $course_categories = $DB->get_record('course_categories', ['id' => $category_id]);
-            if ($course_categories) {
-                $clean_newpath = $clean_newpath . '/category/' . $course_categories->id . '/' . urlencode(strtolower($course_categories->name));
-                if ($this->check_path_allowed($clean_newpath)) {
-                    $this->path = $clean_newpath;
+        } else if ($categoryid) {
+            $coursecategories = $DB->get_record('course_categories', ['id' => $categoryid]);
+            if ($coursecategories) {
+                unset($this->params['categoryid']);
+                $cleannewpath = $cleannewpath . '/category/' . $coursecategories->id .
+                    '/' . urlencode(strtolower($coursecategories->name));
+                if ($this->check_path_allowed($cleannewpath)) {
+                    $this->path = $cleannewpath;
                 }
             }
         }
@@ -213,33 +221,38 @@ class clean_url
 
 
     /**
-     * clean user profile url 
-     * /user/profile.php?id={ID}  => /user/profile/{username}
+     * Cleans user profile URLs into user-friendly format.
+     *
+     * Example:
+     * - /user/profile.php?id={ID} → /user/profile/{username}
+     *
+     * @return \stdClass|null User record if found, null otherwise.
      */
-    private function clean_users_profile_url()
-    {
+    private function clean_users_profile_url() {
         if (empty($this->params['id'])) {
             return null;
         }
 
         global $DB;
-        $user =  $DB->get_record('user', ['id' => $this->params['id']]);
+        $user = $DB->get_record('user', ['id' => $this->params['id']]);
         if ($user) {
-            $clean_newpath = $this->remove_index_php();
-            $clean_newpath = $clean_newpath . '/' . urlencode(strtolower($user->username));
-            if ($this->check_path_allowed($clean_newpath)) {
-                $this->path = $clean_newpath;
+            unset($this->params['id']);
+            $cleannewpath = $this->remove_index_php();
+            $cleannewpath = $cleannewpath . '/' . urlencode(strtolower($user->username));
+            if ($this->check_path_allowed($cleannewpath)) {
+                $this->path = $cleannewpath;
             }
         }
         return $user;
     }
 
     /**
-     * check if the final clean process path matches to existing moodle dir or file
-     * @param string $path 
+     * Checks if the final cleaned path does not conflict with actual Moodle files/dirs.
+     *
+     * @param string $path Path to validate.
+     * @return bool True if allowed, false if conflicts with a real file/dir.
      */
-    private function check_path_allowed($path)
-    {
+    private function check_path_allowed($path) {
         global $CFG;
 
         return (!is_dir($CFG->dirroot . $path) && !is_file($CFG->dirroot . $path . ".php"));

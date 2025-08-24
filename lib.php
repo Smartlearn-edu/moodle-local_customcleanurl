@@ -15,44 +15,58 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * 
+ * Local plugin callbacks for customcleanurl.
+ *
  * @package    local_customcleanurl
  * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * 
+ *
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-
 /**
+ * Callback executed before HTTP headers are sent.
  * From moodle 4.4 callback are managed through callback hook
- * https://moodledev.io/docs/4.5/apis/core/hooks
- * https://docs.moodle.org/dev/Output_callbacks#before_http_headers
- * https://docs.moodle.org/dev/Callbacks
+ *
+ * This hook allows the plugin to initialize URL rewriting
+ * before Moodle sends any output headers.
+ *
+ * @see https://moodledev.io/docs/4.5/apis/core/hooks
+ * @see https://docs.moodle.org/dev/Output_callbacks#before_http_headers
+ *
  */
-function local_customcleanurl_before_http_headers()
-{
-    \local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
+function local_customcleanurl_before_http_headers() {
+    if (class_exists("\local_customcleanurl\local\helper")) {
+        \local_customcleanurl\local\helper::urlrewriteclass_initialize();
+    }
 }
 
 
 /**
- * 
- * https://docs.moodle.org/dev/Login_callbacks#after_config
+ * Callback executed immediately after config.php has been processed.
+ *
+ * This hook is useful for early initialization, such as
+ * enabling URL rewriting logic at the start of execution.
+ *
+ * @see https://docs.moodle.org/dev/Login_callbacks#after_config
+ *
  */
-function local_customcleanurl_after_config()
-{
-    \local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
+function local_customcleanurl_after_config() {
+    if (class_exists("\local_customcleanurl\local\helper")) {
+        \local_customcleanurl\local\helper::urlrewriteclass_initialize();
+    }
 }
 
 
 /**
- * 
+ * Callback to update the `.htaccess` file with required rewrite rules.
+ *
+ * Invoked when plugin settings are changed.
+ * Ensures the custom rewrite rules are written and resets the
+ * `set_htaccess` config flag.
+ *
  */
-function local_customcleanurl_set_htaccess()
-{
+function local_customcleanurl_set_htaccess() {
     \local_customcleanurl\local\htaccess::set_htaccess();
     set_config('set_htaccess', '0', 'local_customcleanurl');
 }

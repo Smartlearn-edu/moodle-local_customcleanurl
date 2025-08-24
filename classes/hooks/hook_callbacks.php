@@ -15,17 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * 
+ *
  * @package    local_customcleanurl
  * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * 
+ *
  */
 
 namespace local_customcleanurl\hooks;
-
-defined('MOODLE_INTERNAL') || die();
 
 use core\hook\output\before_http_headers;
 
@@ -37,8 +35,7 @@ use core\hook\output\before_http_headers;
  * @author     santoshtmp
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class hook_callbacks
-{
+class hook_callbacks {
 
 
     /**
@@ -46,24 +43,26 @@ class hook_callbacks
      *
      * @param \core\hook\output\before_http_headers $hook
      */
-    public static function before_http_headers(before_http_headers $hook): void
-    {
+    public static function before_http_headers(before_http_headers $hook): void {
         global $CFG;
         if (during_initial_install() || isset($CFG->upgraderunning)) {
             // Do nothing during installation or upgrade.
             return;
         }
-        \local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
+        if (class_exists("\local_customcleanurl\local\helper")) {
+            \local_customcleanurl\local\helper::urlrewriteclass_initialize();
+        }
     }
 
 
     /**
-	 * Callback allowing to add contetnt inside the region-main, in the very end
-	 *
-	 * @param \core\hook\after_config $hook
-	 */
-	public static function after_config(\core\hook\after_config $hook): void
-	{
-        \local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
-	}
+     * Callback allowing to add contetnt inside the region-main, in the very end
+     *
+     * @param \core\hook\after_config $hook
+     */
+    public static function after_config(\core\hook\after_config $hook): void {
+        if (class_exists("\local_customcleanurl\local\helper")) {
+            \local_customcleanurl\local\helper::urlrewriteclass_initialize();
+        }
+    }
 }

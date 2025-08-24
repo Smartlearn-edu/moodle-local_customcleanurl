@@ -24,7 +24,7 @@
 
 define(['core/notification', 'core/str'], function (notification, str) {
     return {
-        init: function () {
+        conformdelete: function () {
             document.querySelectorAll('.delete-action').forEach(function (link) {
                 link.addEventListener('click', function (e) {
                     e.preventDefault();

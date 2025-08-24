@@ -17,15 +17,14 @@
 /**
  * Hook callbacks
  * https://moodledev.io/docs/4.5/apis/core/hooks
- * https://docs.moodle.org/dev/Callbacks 
- *  
+ * https://docs.moodle.org/dev/Callbacks
+ *
  * @package    local_customcleanurl
  * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * 
+ *
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 

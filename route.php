@@ -15,29 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * 
+ *
  * @package    local_customcleanurl
  * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * 
+ *
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
-defined('MOODLE_INTERNAL') || die();
+require_login(null, false);
 
 global $CFG, $PAGE;
-$url = $_SERVER['REQUEST_URI']; // $url = $PAGE->url->raw_out(false); //
-$url_path = parse_url($url, PHP_URL_PATH); // $url_path = $PAGE->url->get_path(false); //
-$url_query = ($url_query = parse_url($url, PHP_URL_QUERY)) ? '?' . $url_query : ''; // $url_query = $PAGE->url->params(); //
-// \local_customcleanurl\local\UtilCleanUrlHelper::urlrewriteclass_initialize();
+$url = $_SERVER['REQUEST_URI'];
+$urlpath = parse_url($url, PHP_URL_PATH);
+$urlquery = ($urlquery = parse_url($url, PHP_URL_QUERY)) ? '?' . $urlquery : '';
 
-/**
- * check if clean url is present 
- */
-$moodle_default_url = \local_customcleanurl\local\UtilCleanUrlHelper::get_default_moodle_url();
-if ($moodle_default_url) {
-    $file = $moodle_default_url->out_omit_querystring();
+// Check if clean url is present.
+$moodledefaulturl = \local_customcleanurl\local\helper::get_default_moodle_url();
+if ($moodledefaulturl) {
+    $file = $moodledefaulturl->out_omit_querystring();
     if (strpos($file, $CFG->wwwroot) === 0) {
         $file = substr($file, strlen($CFG->wwwroot));
         $file = $CFG->dirroot . $file;
@@ -46,23 +43,21 @@ if ($moodle_default_url) {
     }
     if (is_file($file)) {
         chdir(dirname($file));
-        $PAGE->set_url($moodle_default_url);
-        $CFG->moodle_default_url = $moodle_default_url;
+        $PAGE->set_url($moodledefaulturl);
+        $CFG->moodledefaulturl = $moodledefaulturl;
         require($file);
         die();
     }
 }
 
-/**
- * directory as path 
- */
-$dir_path = $CFG->dirroot . $url_path;
-if (is_dir($dir_path)) {
-    $files = scandir($dir_path);
+// Directory as path.
+$dirpath = $CFG->dirroot . $urlpath;
+if (is_dir($dirpath)) {
+    $files = scandir($dirpath);
     foreach ($files as $filename) {
         if ($filename === 'index.html' || $filename === 'index.php') {
-            $path_info_folder = pathinfo($filename);
-            $filepath = $dir_path . 'index.' . $path_info_folder['extension'];
+            $pathinfofolder = pathinfo($filename);
+            $filepath = $dirpath . 'index.' . $pathinfofolder['extension'];
             chdir(dirname($filepath));
             require($filepath);
             die();
@@ -70,11 +65,9 @@ if (is_dir($dir_path)) {
     }
 }
 
-/**
- * check if php file is present in path
- */
-if (str_contains($url_path, '.php')) {
-    $filepath = $CFG->dirroot . explode('.php', $url_path)[0] . '.php';
+// Check if php file is present in path.
+if (str_contains($urlpath, '.php')) {
+    $filepath = $CFG->dirroot . explode('.php', $urlpath)[0] . '.php';
     if (file_exists($filepath)) {
         chdir(dirname($filepath));
         require($filepath);
@@ -82,14 +75,12 @@ if (str_contains($url_path, '.php')) {
     }
 }
 
-/**
- * At last redirect to 404 page if the path is not found
- */
+// At last redirect to 404 page if the path is not found.
 header("HTTP/1.0 404 Not Found");
 http_response_code('404');
 $_SERVER['REDIRECT_STATUS'] = '404';
-$page_path_404 = '/local/customcleanurl/404.php';
-$filepath = $CFG->dirroot . $page_path_404;
+$pagepath404 = '/local/customcleanurl/404.php';
+$filepath = $CFG->dirroot . $pagepath404;
 chdir(dirname($filepath));
 require($filepath);
 die();
