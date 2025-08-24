@@ -86,10 +86,20 @@ class customcleanurl_form extends \moodleform {
         $errors = parent::validation($data, $files);
         $a = new stdClass();
 
+        if (!isset($CFG->subdirpath)) {
+            $CFG->subdirpath = (new \moodle_url($CFG->wwwroot))->get_path(false);
+        }
+
         // Add field validation check for duplicate default_url.
         if ($data['default_url']) {
             $mooodleurl = new moodle_url(trim($data['default_url']));
-            $moodlefile = $CFG->dirroot . str_replace($CFG->wwwroot, '', $mooodleurl->out(false));
+            $filepath =  $mooodleurl->get_path(false);
+            if (!empty($CFG->subdirpath)) {
+                if (strpos($filepath, $CFG->subdirpath) === 0) {
+                    $filepath = substr($filepath, strlen($CFG->subdirpath));
+                }
+            }
+            $moodlefile = $CFG->dirroot .  $filepath;
             $a->default_url = trim($data['default_url']);
             if (strpos($mooodleurl->get_path(false), '/') != 0) {
                 $errors['default_url'] = get_string('error_default_url_path', 'local_customcleanurl', $a);
@@ -111,7 +121,13 @@ class customcleanurl_form extends \moodleform {
         // Add field validation check for duplicate custom_url.
         if ($data['custom_url']) {
             $cleanurl = new moodle_url(trim($data['custom_url']));
-            $cleanurlfile = $CFG->dirroot . str_replace($CFG->wwwroot, '', $cleanurl->out(false));
+            $filepath =  $cleanurl->get_path(false);
+            if (!empty($CFG->subdirpath)) {
+                if (strpos($filepath, $CFG->subdirpath) === 0) {
+                    $filepath = substr($filepath, strlen($CFG->subdirpath));
+                }
+            }
+            $cleanurlfile = $CFG->dirroot . $filepath;
             $a->custom_url = trim($data['custom_url']);
             if (strpos($cleanurl->get_path(false), '/') != 0) {
                 $errors['custom_url'] = get_string('error_custom_url_path', 'local_customcleanurl', $a);
