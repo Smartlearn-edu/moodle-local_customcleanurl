@@ -78,7 +78,7 @@ class htaccess {
             if (file_exists(self::get_htaccessfilepath())) {
                 $contents = file_get_contents(self::get_htaccessfilepath());
                 $wordcount = substr_count(strtolower($contents), strtolower('RewriteRule'));
-                return ($wordcount == '2') ? true : false;
+                return ($wordcount == '1' && self::check_rewrite_htaccess()) ? true : false;
             } else {
                 return false;
             }
