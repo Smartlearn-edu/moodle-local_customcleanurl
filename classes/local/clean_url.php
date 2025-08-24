@@ -136,9 +136,12 @@ class clean_url {
      * @return void
      */
     private function clean_path() {
-        global $DB;
+        global $DB, $CFG;
         $cleanurltype = get_config('local_customcleanurl', 'cleanurl_type');
         $cleanurltype = explode(",", $cleanurltype);
+        if (!isset($CFG->subdirpath)) {
+            $CFG->subdirpath = (new \moodle_url($CFG->wwwroot))->get_path(false);
+        }
 
         // For cleanurl_type = define_url.
         if (in_array('define_url', $cleanurltype)) {
@@ -151,7 +154,7 @@ class clean_url {
         // For cleanurl_type = course_url.
         if (in_array('course_url', $cleanurltype)) {
             // Url path start with /course.
-            if (preg_match('#^/course#', $this->path, $matches)) {
+            if (preg_match('#^' . $CFG->subdirpath . '/course#', $this->path, $matches)) {
                 $this->clean_course_url();
                 return;
             }
@@ -160,7 +163,7 @@ class clean_url {
         // For cleanurl_type = user_url.
         if (in_array('user_url', $cleanurltype)) {
             // Url path start with /course.
-            if (preg_match('#^/user/profile.php#', $this->path, $matches)) {
+            if (preg_match('#^' . $CFG->subdirpath . '/user/profile.php#', $this->path, $matches)) {
                 $this->clean_users_profile_url();
                 return;
             }
@@ -179,6 +182,14 @@ class clean_url {
      * @return bool False if no match, true if rewritten.
      */
     private function clean_course_url() {
+
+        global $DB, $CFG;
+        if (!empty($CFG->subdirpath)) {
+            if (strpos($this->path, $CFG->subdirpath) === 0) {
+                $this->path = substr($this->path, strlen($CFG->subdirpath));
+            }
+        }
+
         $coursepath = [
             '/course/view.php',
             '/course/edit.php',
@@ -187,7 +198,6 @@ class clean_url {
         if (!in_array($this->path, $coursepath)) {
             return;
         }
-        global $DB;
 
         // ... params
         $courseid = isset($this->params['id']) ? $this->params['id'] : '';
@@ -233,7 +243,13 @@ class clean_url {
             return null;
         }
 
-        global $DB;
+        global $DB, $CFG;
+        if (!empty($CFG->subdirpath)) {
+            if (strpos($this->path, $CFG->subdirpath) === 0) {
+                $this->path = substr($this->path, strlen($CFG->subdirpath));
+            }
+        }
+
         $user = $DB->get_record('user', ['id' => $this->params['id']]);
         if ($user) {
             unset($this->params['id']);
