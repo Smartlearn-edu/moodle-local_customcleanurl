@@ -74,7 +74,7 @@ This will change the default moodle url to clean url.
 </ol>
 ';
 $string['clean_url_type'] = 'Custom URL Type';
-$string['define_custom_urldesc'] = 'Now you can define custom url for the existing moodle url at <a href="/local/customcleanurl/define_custom_url.php">HERE - Define Custom URL</a>.';
+$string['define_custom_urldesc'] = 'Now you can define custom url for the existing moodle url at <a href="{$a->url}">HERE - Define Custom URL</a>.';
 
 $string['sn'] = 'S.N.';
 $string['default_url'] = 'Default Moodle URL';
