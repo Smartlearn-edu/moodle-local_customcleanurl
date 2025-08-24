@@ -48,5 +48,5 @@ Options -Indexes
 ```
 
 ## Screenshot
-![Clean custom url setting](./pix/screenshot_custom_clean_settings.png)
-![Define custom url](./pix/screenshot_define_moodle_custom_url.png)
+![Clean custom url setting](./pix/screenshot/general_settings.png)
+![Define custom url](./pix/screenshot/define_custom_url.png)
