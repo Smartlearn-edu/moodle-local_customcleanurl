@@ -80,10 +80,10 @@ class helper {
         if (!self::is_enable_customcleanurl()) {
             return;
         }
-        $basepath = (new \moodle_url($CFG->wwwroot))->get_path(false);
+        $subdirpath = (new \moodle_url($CFG->wwwroot))->get_path(false);
         $requestmoodleurl = new moodle_url($_SERVER['REQUEST_URI']);
         $requestpath = $requestmoodleurl->get_path(false);
-        $requestpath = str_replace($basepath, '', $requestpath);
+        $requestpath = str_replace($subdirpath, '', $requestpath);
 
         $parts = explode("/", trim($requestpath, '/'));
         $uniquename = urldecode(end($parts));

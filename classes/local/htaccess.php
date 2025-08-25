@@ -174,7 +174,7 @@ class htaccess {
      */
     private static function get_default_htaccess_content() {
         global $CFG;
-        $basepath = (new \moodle_url($CFG->wwwroot))->get_path(false);
+        $subdirpath = (new \moodle_url($CFG->wwwroot))->get_path(false);
         return trim("
 # BEGIN_MOODLE_LOCAL_CUSTOMCLEANURL
 # DO NOT EDIT route
@@ -186,9 +186,9 @@ RewriteBase /
 # Do not change URLs that point to an existing file and directory.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ " . $basepath . "/local/customcleanurl/route.php [L]
-ErrorDocument 403 " . $basepath . "/local/customcleanurl/404.php
-ErrorDocument 404 " . $basepath . "/local/customcleanurl/404.php
+RewriteRule ^(.*)$ " . $subdirpath . "/local/customcleanurl/route.php [L]
+ErrorDocument 403 " . $subdirpath . "/local/customcleanurl/404.php
+ErrorDocument 404 " . $subdirpath . "/local/customcleanurl/404.php
 </IfModule>
 # DO NOT EDIT route
 
