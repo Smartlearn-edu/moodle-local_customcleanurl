@@ -89,6 +89,7 @@ $string['error_custom_url_is_default'] = 'Provided URL "{$a->custom_url}" is the
 $string['error_custom_url_path'] = 'Provided path "{$a->custom_url}" must start with forward slash "/".';
 $string['error_custom_exist'] = 'Provided Custom Clean URL "{$a->custom_url}" is alrady taken.';
 $string['error_custom_url_not_originalurl'] = 'Provided URL "{$a->custom_url}" is not the default original URL.';
+$string['error_customurlparam'] = 'Custom Clean url cannot have parameter.';
 
 $string['edit_custom_url_title'] = 'Edit custom url';
 $string['data_saved'] = 'Custom url data is sucesfully saved.';

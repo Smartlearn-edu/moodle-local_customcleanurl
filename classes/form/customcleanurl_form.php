@@ -122,6 +122,9 @@ class customcleanurl_form extends \moodleform {
         if ($data['custom_url']) {
             $cleanurl = new moodle_url(trim($data['custom_url']));
             $filepath =  $cleanurl->get_path(false);
+            if ($cleanurl->params()) {
+                $errors['custom_url'] = get_string('error_customurlparam', 'local_customcleanurl', $a);
+            }
             if (!empty($CFG->subdirpath)) {
                 if (strpos($filepath, $CFG->subdirpath) === 0) {
                     $filepath = substr($filepath, strlen($CFG->subdirpath));

@@ -23,64 +23,40 @@
  *
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
-require_login(null, false);
+$requesturi = $_SERVER['REQUEST_URI'];
 
-global $CFG, $PAGE;
-$url = $_SERVER['REQUEST_URI'];
-$urlpath = parse_url($url, PHP_URL_PATH);
-$urlquery = ($urlquery = parse_url($url, PHP_URL_QUERY)) ? '?' . $urlquery : '';
+require_once(__DIR__ . '/../../config.php');
+$responsedata = \local_customcleanurl\local\helper::check_requesturl($requesturi);
 
-// Check if clean url is present.
-$moodledefaulturl = \local_customcleanurl\local\helper::get_default_moodle_url();
-if ($moodledefaulturl) {
-    $file = $moodledefaulturl->out_omit_querystring();
-    if (strpos($file, $CFG->wwwroot) === 0) {
-        $file = substr($file, strlen($CFG->wwwroot));
-        $file = $CFG->dirroot . $file;
-    } else {
-        $file = null;
-    }
-    if (is_file($file)) {
-        chdir(dirname($file));
-        $PAGE->set_url($moodledefaulturl);
-        $CFG->moodledefaulturl = $moodledefaulturl;
-        require($file);
+if (isset($responsedata['status']) && $responsedata['status']) {
+    $moodleurl = $responsedata['moodleurl'] ?? '';
+    if ($moodleurl) {
+        redirect($moodleurl);
         die();
     }
-}
-
-// Directory as path.
-$dirpath = $CFG->dirroot . $urlpath;
-if (is_dir($dirpath)) {
-    $files = scandir($dirpath);
-    foreach ($files as $filename) {
-        if ($filename === 'index.html' || $filename === 'index.php') {
-            $pathinfofolder = pathinfo($filename);
-            $filepath = $dirpath . 'index.' . $pathinfofolder['extension'];
-            chdir(dirname($filepath));
-            require($filepath);
-            die();
-        }
+    $urltype = $responsedata['urltype'] ?? '';
+    $filepath = $responsedata['filepath'] ?? '';
+    $param = $responsedata['param'] ?? [];
+    if ($urltype == '404') {
+        // At last redirect to 404 page if the path is not found.
+        header("HTTP/1.0 404 Not Found");
+        http_response_code('404');
+        $_SERVER['REDIRECT_STATUS'] = '404';
+        chdir(dirname($filepath));
+        require($filepath);
+        die();
     }
-}
 
-// Check if php file is present in path.
-if (str_contains($urlpath, '.php')) {
-    $filepath = $CFG->dirroot . explode('.php', $urlpath)[0] . '.php';
-    if (file_exists($filepath)) {
+    foreach ($param as $key => $value) {
+        $_GET[$key] = $value;
+    }
+    if (is_file($filepath)) {
         chdir(dirname($filepath));
         require($filepath);
         die();
     }
 }
-
-// At last redirect to 404 page if the path is not found.
-header("HTTP/1.0 404 Not Found");
-http_response_code('404');
-$_SERVER['REDIRECT_STATUS'] = '404';
-$pagepath404 = '/local/customcleanurl/404.php';
-$filepath = $CFG->dirroot . $pagepath404;
-chdir(dirname($filepath));
-require($filepath);
-die();
+// Output message content.
+echo $OUTPUT->header();
+echo $responsedata['message'];
+echo $OUTPUT->footer();

@@ -64,26 +64,34 @@ class helper {
     }
 
     /**
-     * Attempts to resolve the current request URL into a default Moodle URL
-     * if it matches a defined clean URL pattern.
-     *
-     * Supported clean URL types:
-     * - `define_url` (admin-defined mappings)
-     * - `course_url` (/course/{shortname}, /course/edit/{shortname}, /course/category/{id}/{name})
-     * - `user_url` (/user/profile/{username})
-     *
-     * @return moodle_url|false The resolved Moodle URL object if a mapping exists,
-     *                          false if no mapping is found or feature disabled.
+     * Resolves a given request URL to a Moodle internal path or file.
+     * 
+     * @param string $requesturl The URL to be resolved (can be relative or absolute).
+     * @return array
+     * 
      */
-    public static function get_default_moodle_url() {
-        global $DB, $CFG, $OUTPUT;
-        if (!self::is_enable_customcleanurl()) {
-            return;
-        }
+    public static function check_requesturl($requesturl) {
+        global $CFG, $DB;
         $subdirpath = (new \moodle_url($CFG->wwwroot))->get_path(false);
-        $requestmoodleurl = new moodle_url($_SERVER['REQUEST_URI']);
+        $requestmoodleurl = new moodle_url(rtrim($requesturl, "/"));
         $requestpath = $requestmoodleurl->get_path(false);
         $requestpath = str_replace($subdirpath, '', $requestpath);
+
+        $responsedata = [
+            'status' => true,
+            'dirroot' => $CFG->dirroot,
+            'filepath' => '',
+            'moodleurl' => '',
+            'param' => [],
+            'message' => '',
+            'urltype' => '',
+        ];
+
+        if (!helper::is_enable_customcleanurl()) {
+            $responsedata['status'] = false;
+            $responsedata['message'] = get_string('featureisnotenable', 'local_customcleanurl');
+            return $responsedata;
+        }
 
         $parts = explode("/", trim($requestpath, '/'));
         $uniquename = urldecode(end($parts));
@@ -103,11 +111,11 @@ class helper {
         // Case 2: Course-related URLs.
         if (in_array('course_url', $cleanurltype) && !$responsepath && $parts[0] === 'course') {
             $course = $DB->get_record('course', ['shortname' => $uniquename]);
-            if ($course && count($parts) == '2') {
+            if ($course && count($parts) === 2) {
                 $responsepath = "/course/view.php?id=" . $course->id;
-            } else if ($course && count($parts) == '3' && $parts[1] === 'edit') {
+            } else if ($course && count($parts) === 3 && $parts[1] === 'edit') {
                 $responsepath = "/course/edit.php?id=" . $course->id;
-            } else if (count($parts) == '4') {
+            } else if (count($parts) === 4) {
                 $coursecategories = $DB->get_record('course_categories', ['id' => $parts[2]]);
                 $responsepath = "/course/index.php?categoryid=" . $coursecategories->id;
             }
@@ -116,7 +124,7 @@ class helper {
         // Case 3: User profile URLs.
         if (in_array('user_url', $cleanurltype) && !$responsepath && $parts[0] === 'user') {
             $user = $DB->get_record('user', ['username' => $uniquename]);
-            if ($user && count($parts) == '3') {
+            if ($user && count($parts) === 3) {
                 $responsepath = "/user/profile.php?id=" . $user->id;
             }
         }
@@ -124,28 +132,56 @@ class helper {
         // Return the resolved Moodle URL if found.
         if ($responsepath) {
             $requestparam = $requestmoodleurl->params();
-            $url = new moodle_url($responsepath);
-            foreach ($url->params() as $k => $v) {
+
+            $responseurl = new moodle_url($responsepath);
+            foreach ($responseurl->params() as $k => $v) {
                 if (array_key_exists($k, $requestparam)) {
-                    if (isset($_GET[$k])) {
-                        $a = new stdClass();
-                        $a->param = $k;
-                        $a->responsepath = $responsepath;
-                        echo $OUTPUT->header();
-                        echo get_string('invalidcustomparam', 'local_customcleanurl', $a);
-                        echo $OUTPUT->footer();
-                        die;
-                    }
+                    $a = new stdClass();
+                    $a->param = $k;
+                    $a->responsepath = $responsepath;
+                    $responsedata['status'] = false;
+                    $responsedata['message'] = get_string('invalidcustomparam', 'local_customcleanurl', $a);
+                    return $responsedata;
                 }
-                $v = str_replace('+', ' ', $v);
-                $_GET[$k] = $v;
             }
-            return $url;
+
+            $responsedata['filepath'] = $CFG->dirroot . $responseurl->get_path(false);
+            $responsedata['param'] = $responseurl->params();
+            $responsedata['moodleurl'] = $responseurl->raw_out(false);
+            $responsedata['urltype'] = 'customcleanurl';
+            return $responsedata;
         }
-        return false;
+
+        // Directory as path.
+        $dirpath = $CFG->dirroot . $requestpath;
+        if (is_dir($dirpath)) {
+            $files = scandir($dirpath);
+            foreach ($files as $filename) {
+                if ($filename === 'index.html' || $filename === 'index.php') {
+                    $pathinfofolder = pathinfo($filename);
+                    $filepath = $dirpath . 'index.' . $pathinfofolder['extension'];
+                    $responsedata['filepath'] = $filepath;
+                    $responsedata['urltype'] = 'customcleanurl';
+                    return $responsedata;
+                }
+            }
+        }
+
+        // Check if php file is present in path.
+        if (str_contains($requestpath, '.php')) {
+            $filepath = $CFG->dirroot . explode('.php', $requestpath)[0] . '.php';
+            if (file_exists($filepath)) {
+                $responsedata['filepath'] = $filepath;
+                $responsedata['urltype'] = 'phppath';
+                return $responsedata;
+            }
+        }
+
+        // At last redirect to 404 page if the path is not found.
+        $responsedata['urltype'] = '404';
+        $responsedata['filepath'] = $CFG->dirroot . '/local/customcleanurl/404.php';
+        return $responsedata;
     }
-
-
 
     /**
      * Initializes the custom clean URL rewrite class by assigning it

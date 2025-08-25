@@ -61,27 +61,21 @@ class customcleanurl implements \core\output\url_rewriter {
      * @return void
      */
     public static function html_head_setup() {
-        return '';
         if (helper::is_enable_customcleanurl()) {
-            global $CFG, $PAGE;
+
+            global $PAGE;
             $cleanurl = $PAGE->url->out(false);
+            $moodleurl = $PAGE->url->raw_out(false);
+
             $output = '';
 
-            if (isset($CFG->moodledefaulturl)) {
-                // This page came through local customcleanurl route .
-                $output .= self::get_base_href($CFG->moodledefaulturl->raw_out(false));
+            if ($moodleurl != $cleanurl) {
+                // This page URL could have been cleaned up, so do it!
+                $output .= self::get_base_href($moodleurl);
+                $output .= self::get_replacestate_script($cleanurl);
                 $output .= self::get_anchor_fix_javascript($cleanurl);
-            } else {
-                // This page came through its canonical/legacy address (not clean version).
-                $orig = $PAGE->url->raw_out(false);
-                if ($orig != $cleanurl) {
-                    // This page URL could have been cleaned up, so do it!
-                    $output .= self::get_base_href($orig);
-                    $output .= self::get_replacestate_script($cleanurl);
-                    $output .= self::get_anchor_fix_javascript($cleanurl);
-                    $output .= self::get_link_canonical();
-                    self::mark_apache_note($cleanurl);
-                }
+                $output .= self::get_link_canonical();
+                self::mark_apache_note($cleanurl);
             }
 
             return $output;
