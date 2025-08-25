@@ -93,7 +93,7 @@ class customcleanurl_form extends \moodleform {
         // Add field validation check for duplicate default_url.
         if ($data['default_url']) {
             $mooodleurl = new moodle_url(trim($data['default_url']));
-            $filepath =  $mooodleurl->get_path(false);
+            $filepath = $mooodleurl->get_path(false);
             if (!empty($CFG->subdirpath)) {
                 if (strpos($filepath, $CFG->subdirpath) === 0) {
                     $filepath = substr($filepath, strlen($CFG->subdirpath));
@@ -121,7 +121,7 @@ class customcleanurl_form extends \moodleform {
         // Add field validation check for duplicate custom_url.
         if ($data['custom_url']) {
             $cleanurl = new moodle_url(trim($data['custom_url']));
-            $filepath =  $cleanurl->get_path(false);
+            $filepath = $cleanurl->get_path(false);
             if ($cleanurl->params()) {
                 $errors['custom_url'] = get_string('error_customurlparam', 'local_customcleanurl', $a);
             }

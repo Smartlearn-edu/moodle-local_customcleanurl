@@ -65,10 +65,10 @@ class helper {
 
     /**
      * Resolves a given request URL to a Moodle internal path or file.
-     * 
+     *
      * @param string $requesturl The URL to be resolved (can be relative or absolute).
      * @return array
-     * 
+     *
      */
     public static function check_requesturl($requesturl) {
         global $CFG, $DB;
@@ -87,7 +87,7 @@ class helper {
             'urltype' => '',
         ];
 
-        if (!helper::is_enable_customcleanurl()) {
+        if (!self::is_enable_customcleanurl()) {
             $responsedata['status'] = false;
             $responsedata['message'] = get_string('featureisnotenable', 'local_customcleanurl');
             return $responsedata;
