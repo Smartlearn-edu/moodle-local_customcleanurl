@@ -78,7 +78,7 @@ $string['define_custom_urldesc'] = 'Now you can define custom url for the existi
 
 $string['sn'] = 'S.N.';
 $string['default_url'] = 'Default Moodle URL';
-$string['default_url_help'] = 'Default original moodle url. <br> It should be .php url and must start with your_domain or / .<br> Example: your_domain/course/view.php?id=7';
+$string['default_url_help'] = 'Default original moodle url. <br> It should be .php url and must start with your_domain or / .<br> Example: your_domain/course/view.php?id=7 <br> <strong>All the moodle url may not support the clean url.</strong>';
 $string['custom_url'] = "Custom URL";
 $string['custom_url_help'] = 'Clean custom url. <br> It should not match moodle default url, which is without .php file and moodle dir url.<br> Example: your_domain/course/math';
 $string['error_default_url'] = 'Default Moodle URL "{$a->default_url}" is alrady taken.';
