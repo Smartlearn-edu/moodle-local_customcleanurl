@@ -18,32 +18,17 @@ You can download as a zip from github then extract into your_moodle/local/custom
 ## Modify Apache .htaccess file
 ```
 # BEGIN_MOODLE_LOCAL_CUSTOMCLEANURL
-# DO NOT EDIT route
-<IfModule mod_rewrite.c>
-# Enable RewriteEngine
+# DO NOT EDIT LOCAL_CUSTOMCLEANURL ROUTE
+
 RewriteEngine On
-# All relative URLs are based from root
 RewriteBase /
-# Do not change URLs that point to an existing file and directory.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ /local/customcleanurl/route.php [L]
-ErrorDocument 403 /local/customcleanurl/404.php
-ErrorDocument 404 /local/customcleanurl/404.php
-</IfModule>
-# DO NOT EDIT route
+RewriteRule ^(.*)$ /moodle405/local/customcleanurl/route.php [L]
+ErrorDocument 403 /moodle405/local/customcleanurl/404.php
+ErrorDocument 404 /moodle405/local/customcleanurl/404.php
 
-# Deny access to hidden files - files that start with a dot (.)
-<FilesMatch \"^\.\">
-Order allow,deny
-Deny from all
-</FilesMatch>
-
-# Deny directory view
-Options +FollowSymLinks
-Options -MultiViews
-Options -Indexes
-
+# DO NOT EDIT LOCAL_CUSTOMCLEANURL ROUTE
 # END_MOODLE_LOCAL_CUSTOMCLEANURL
 ```
 

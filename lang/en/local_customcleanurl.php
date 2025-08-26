@@ -45,9 +45,8 @@ $string['delete_data_heading'] = 'Delete custom url';
 $string['delete_conform_text'] = 'Are you sure you want to delete "{$a->customcleanurl}"?';
 
 $string['enable_customcleanurl'] = 'Enable Customcleanurl';
-$string['change_htaccess_as_readme'] = 'Change the htaccess accoding to readme file or add below rules into htaccess.';
-$string['pass_customcleanurlroutecheck'] = 'Route is sucessfully integrated.';
-$string['fail_customcleanurlroutecheck'] = 'Route is not integrated, please check htaccess file.';
+$string['pass_customcleanurlroutecheck'] = 'Customcleanurl route integrated successfully.';
+$string['fail_customcleanurlroutecheck'] = 'Customcleanurl route integration failed. Check your .htaccess file and update it according to the README or by adding the rules provided below.';
 $string['course_url'] = 'Course URL';
 $string['user_url'] = 'User URL';
 $string['define_custom_url'] = 'Define Custom URL';

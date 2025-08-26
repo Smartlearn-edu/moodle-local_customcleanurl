@@ -45,11 +45,6 @@ if ($hassiteconfig) {
     $title = get_string('enable_customcleanurl', 'local_customcleanurl');
     $description = '';
     if ($isenablecustomcleanurl) {
-        $description .= html_writer::tag(
-            'div',
-            get_string('change_htaccess_as_readme', 'local_customcleanurl'),
-            ["class" => "alert alert-danger alert-block fade in  alert-dismissible"]
-        );
         $customcleanurlroutecheck = helper::customcleanurl_routecheck();
         if ($customcleanurlroutecheck) {
             $description .= html_writer::tag(
