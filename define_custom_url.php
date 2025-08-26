@@ -43,7 +43,7 @@ if (!has_capability('moodle/site:config', $context)) {
 }
 $cleanurloptions = get_config('local_customcleanurl', 'cleanurl_type');
 $cleanurloptions = explode(",", $cleanurloptions);
-if (!(in_array('define_url', $cleanurloptions) && helper::is_enable_customcleanurl())) {
+if (!(in_array('defineurl', $cleanurloptions) && helper::is_enable_customcleanurl())) {
     throw new moodle_exception('featureisnotenable', 'local_customcleanurl');
 }
 
@@ -67,7 +67,7 @@ $definecustomurlform = new \local_customcleanurl\form\customcleanurl_form();
 if ($definecustomurlform->is_cancelled()) {
     redirect($pageurl);
 } else if ($formdata = $definecustomurlform->get_data()) {
-    customcleanurl_handler::save_data($formdata, $pageurl, 'define_url');
+    customcleanurl_handler::save_data($formdata, $pageurl, 'defineurl');
 } else {
     if ($action && $id) {
         // Verify sesskey.

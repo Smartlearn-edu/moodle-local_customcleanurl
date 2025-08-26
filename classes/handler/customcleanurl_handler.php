@@ -48,10 +48,10 @@ class customcleanurl_handler {
      *
      * @param \stdClass $data       Form data containing default_url, custom_url, and optionally id.
      * @param moodle_url|string $returnurl URL to redirect to after saving.
-     * @param string $cleanurltype Type of clean URL (e.g., 'define_url'). Defaults to 'define_url'.
+     * @param string $cleanurltype Type of clean URL (e.g., 'defineurl'). Defaults to 'defineurl'.
      * @return void Redirects to the given return URL with a status message.
      */
-    public static function save_data($data, $returnurl, $cleanurltype = 'define_url') {
+    public static function save_data($data, $returnurl, $cleanurltype = 'defineurl') {
         global $DB, $CFG;
         $status = false;
         $message = '';

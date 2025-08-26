@@ -129,9 +129,9 @@ class clean_url {
     /**
      * Cleans the URL path depending on the configured clean URL types.
      *
-     * - define_url: Rewrites URLs defined in custom table.
-     * - course_url: Rewrites course-related URLs.
-     * - user_url: Rewrites user profile URLs.
+     * - defineurl: Rewrites URLs defined in custom table.
+     * - courseurl: Rewrites course-related URLs.
+     * - userurl: Rewrites user profile URLs.
      *
      * @return void
      */
@@ -143,8 +143,8 @@ class clean_url {
             $CFG->subdirpath = (new \moodle_url($CFG->wwwroot))->get_path(false);
         }
 
-        // For cleanurl_type = define_url.
-        if (in_array('define_url', $cleanurltype)) {
+        // For cleanurl_type = defineurl.
+        if (in_array('defineurl', $cleanurltype)) {
             $defaulturl = str_replace($CFG->wwwroot, '', $this->originalurl->raw_out(false));
             $checkcustomurlpath = $DB->get_record('local_customcleanurl', ['default_url' => $defaulturl]);
             if ($checkcustomurlpath) {
@@ -153,8 +153,8 @@ class clean_url {
             }
         }
 
-        // For cleanurl_type = course_url.
-        if (in_array('course_url', $cleanurltype)) {
+        // For cleanurl_type = courseurl.
+        if (in_array('courseurl', $cleanurltype)) {
             // Url path start with /course.
             if (preg_match('#^' . $CFG->subdirpath . '/course#', $this->path, $matches)) {
                 $this->clean_course_url();
@@ -162,8 +162,8 @@ class clean_url {
             }
         }
 
-        // For cleanurl_type = user_url.
-        if (in_array('user_url', $cleanurltype)) {
+        // For cleanurl_type = userurl.
+        if (in_array('userurl', $cleanurltype)) {
             // Url path start with /course.
             if (preg_match('#^' . $CFG->subdirpath . '/user/profile.php#', $this->path, $matches)) {
                 $this->clean_users_profile_url();

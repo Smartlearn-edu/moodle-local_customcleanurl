@@ -79,9 +79,8 @@ class helper {
 
         $responsedata = [
             'status' => true,
-            'dirroot' => $CFG->dirroot,
-            'filepath' => '',
             'moodleurl' => '',
+            'filepath' => '',
             'param' => [],
             'message' => '',
             'urltype' => '',
@@ -95,60 +94,61 @@ class helper {
 
         $parts = explode("/", trim($requestpath, '/'));
         $uniquename = urldecode(end($parts));
-        $responsepath = '';
+        $responseuri = '';
 
         $cleanurltype = get_config('local_customcleanurl', 'cleanurl_type');
         $cleanurltype = explode(",", $cleanurltype);
 
         // Case 1: Admin-defined custom mapping.
-        if (in_array('define_url', $cleanurltype)) {
+        if (in_array('defineurl', $cleanurltype)) {
             $checkcustomurlpath = $DB->get_record('local_customcleanurl', ['custom_url' => $requestpath]);
             if ($checkcustomurlpath) {
-                $responsepath = $checkcustomurlpath->default_url;
+                $responseuri = $checkcustomurlpath->default_url;
             }
         }
 
         // Case 2: Course-related URLs.
-        if (in_array('course_url', $cleanurltype) && !$responsepath && $parts[0] === 'course') {
+        if (in_array('courseurl', $cleanurltype) && !$responseuri && $parts[0] === 'course') {
             $course = $DB->get_record('course', ['shortname' => $uniquename]);
             if ($course && count($parts) === 2) {
-                $responsepath = "/course/view.php?id=" . $course->id;
+                $responseuri = "/course/view.php?id=" . $course->id;
             } else if ($course && count($parts) === 3 && $parts[1] === 'edit') {
-                $responsepath = "/course/edit.php?id=" . $course->id;
+                $responseuri = "/course/edit.php?id=" . $course->id;
             } else if (count($parts) === 4) {
                 $coursecategories = $DB->get_record('course_categories', ['id' => $parts[2]]);
-                $responsepath = "/course/index.php?categoryid=" . $coursecategories->id;
+                $responseuri = "/course/index.php?categoryid=" . $coursecategories->id;
             }
         }
 
         // Case 3: User profile URLs.
-        if (in_array('user_url', $cleanurltype) && !$responsepath && $parts[0] === 'user') {
+        if (in_array('userurl', $cleanurltype) && !$responseuri && $parts[0] === 'user') {
             $user = $DB->get_record('user', ['username' => $uniquename]);
             if ($user && count($parts) === 3) {
-                $responsepath = "/user/profile.php?id=" . $user->id;
+                $responseuri = "/user/profile.php?id=" . $user->id;
             }
         }
 
         // Return the resolved Moodle URL if found.
-        if ($responsepath) {
+        if ($responseuri) {
             $requestparam = $requestmoodleurl->params();
 
-            $responseurl = new moodle_url($responsepath);
+            $responseurl = new moodle_url($responseuri);
             foreach ($responseurl->params() as $k => $v) {
                 if (array_key_exists($k, $requestparam)) {
                     $a = new stdClass();
                     $a->param = $k;
-                    $a->responsepath = $responsepath;
+                    $a->responsepath = $responseuri;
                     $responsedata['status'] = false;
                     $responsedata['message'] = get_string('invalidcustomparam', 'local_customcleanurl', $a);
                     return $responsedata;
                 }
             }
-
-            $responsedata['filepath'] = $CFG->dirroot . $responseurl->get_path(false);
+            $responsepath = $responseurl->get_path(false);
+            $responsedata['urltype'] = self::geturlpathtype($responsepath);
+            $responsedata['filepath'] = $CFG->dirroot . $responsepath;
             $responsedata['param'] = $responseurl->params();
             $responsedata['moodleurl'] = $responseurl->raw_out(false);
-            $responsedata['urltype'] = 'customcleanurl';
+
             return $responsedata;
         }
 
@@ -161,7 +161,7 @@ class helper {
                     $pathinfofolder = pathinfo($filename);
                     $filepath = $dirpath . 'index.' . $pathinfofolder['extension'];
                     $responsedata['filepath'] = $filepath;
-                    $responsedata['urltype'] = 'customcleanurl';
+                    $responsedata['urltype'] = 'dirpath';
                     return $responsedata;
                 }
             }
@@ -181,6 +181,33 @@ class helper {
         $responsedata['urltype'] = '404';
         $responsedata['filepath'] = $CFG->dirroot . '/local/customcleanurl/404.php';
         return $responsedata;
+    }
+
+    /**
+     * 
+     */
+    public static function geturlpathtype($responsepath) {
+        $urltypes = [
+            'customcleanurl_courseurl' => [
+                '/course/view.php',
+                '/course/edit.php',
+                '/course/index.php',
+            ],
+            'customcleanurl_userurl' => '/user/profile.php'
+        ];
+        foreach ($urltypes as $key => $item) {
+            if (is_array($item)) {
+                if (in_array($responsepath, $item, true)) {
+                    return $key;
+                }
+            } else {
+                if ($item === $responsepath) {
+                    return $key;
+                }
+            }
+        }
+        $responsepath = str_replace('.php', '', $responsepath);
+        return implode("_", explode("/", trim($responsepath, "/")));
     }
 
     /**

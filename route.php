@@ -32,15 +32,16 @@ $responsedata = \local_customcleanurl\local\helper::check_requesturl($requesturi
 
 if (isset($responsedata['status']) && $responsedata['status']) {
     $moodleurl = $responsedata['moodleurl'] ?? '';
-    if ($moodleurl) {
-        redirect($moodleurl);
-        die();
-    }
     $urltype = $responsedata['urltype'] ?? '';
     $filepath = $responsedata['filepath'] ?? '';
     $param = $responsedata['param'] ?? [];
+
+    if ($moodleurl && $urltype == 'mod_page_view') {
+        redirect($moodleurl);
+        die();
+    }
+
     if ($urltype == '404') {
-        // At last redirect to 404 page if the path is not found.
         header("HTTP/1.0 404 Not Found");
         http_response_code('404');
         $_SERVER['REDIRECT_STATUS'] = '404';
@@ -60,5 +61,5 @@ if (isset($responsedata['status']) && $responsedata['status']) {
 }
 // Output message content.
 echo $OUTPUT->header();
-echo $responsedata['message'];
+echo $responsedata['message'] ?? '';
 echo $OUTPUT->footer();
