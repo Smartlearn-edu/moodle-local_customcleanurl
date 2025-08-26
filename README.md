@@ -24,9 +24,9 @@ RewriteEngine On
 RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ /moodle405/local/customcleanurl/route.php [L]
-ErrorDocument 403 /moodle405/local/customcleanurl/404.php
-ErrorDocument 404 /moodle405/local/customcleanurl/404.php
+RewriteRule ^(.*)$ /local/customcleanurl/route.php [L]
+ErrorDocument 403 /local/customcleanurl/404.php
+ErrorDocument 404 /local/customcleanurl/404.php
 
 # DO NOT EDIT LOCAL_CUSTOMCLEANURL ROUTE
 # END_MOODLE_LOCAL_CUSTOMCLEANURL
