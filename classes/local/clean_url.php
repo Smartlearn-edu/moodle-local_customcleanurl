@@ -73,7 +73,7 @@ class clean_url {
         if (!in_array($this->originalurl->get_scheme(), ['http', 'https'])) {
             return;
         }
-        if (!helper::is_enable_customcleanurl()) {
+        if (!helper::is_enable_customcleanurl() || !helper::customcleanurl_routecheck()) {
             return;
         }
         $this->clean_path();

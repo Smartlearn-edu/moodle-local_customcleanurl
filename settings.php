@@ -50,11 +50,25 @@ if ($hassiteconfig) {
             get_string('change_htaccess_as_readme', 'local_customcleanurl'),
             ["class" => "alert alert-danger alert-block fade in  alert-dismissible"]
         );
-        $description .= html_writer::tag(
-            'div',
-            html_writer::tag('pre', \local_customcleanurl\local\htaccess::get_default_htaccess_content()),
-            ["class" => "alert alert-info alert-block fade in  alert-dismissible"]
-        );
+        $customcleanurlroutecheck = helper::customcleanurl_routecheck();
+        if ($customcleanurlroutecheck) {
+            $description .= html_writer::tag(
+                'div',
+                get_string('pass_customcleanurlroutecheck', 'local_customcleanurl'),
+                ["class" => "alert alert-info alert-block fade in  alert-dismissible"]
+            );
+        } else {
+            $description .= html_writer::tag(
+                'div',
+                get_string('fail_customcleanurlroutecheck', 'local_customcleanurl'),
+                ["class" => "alert alert-danger alert-block fade in  alert-dismissible"]
+            );
+            $description .= html_writer::tag(
+                'div',
+                html_writer::tag('pre', \local_customcleanurl\local\htaccess::get_default_htaccess_content()),
+                ["class" => "alert alert-info alert-block fade in  alert-dismissible"]
+            );
+        }
     }
     $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
     $settings->add($setting);

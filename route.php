@@ -26,13 +26,18 @@
 require_once(__DIR__ . '/../../config.php');
 defined('MOODLE_INTERNAL') || die();
 $requesturi = $_SERVER['REQUEST_URI'];
-require_login(null, false);
 
 $responsedata = \local_customcleanurl\local\helper::check_requesturl($requesturi);
 
 if (isset($responsedata['status']) && $responsedata['status']) {
-    $moodleurl = $responsedata['moodleurl'] ?? '';
     $urltype = $responsedata['urltype'] ?? '';
+
+    if ($urltype == 'customcleanurl_routetest') {
+        echo json_encode(['status' => true]);
+        die();
+    }
+
+    $moodleurl = $responsedata['moodleurl'] ?? '';
     $filepath = $responsedata['filepath'] ?? '';
     $param = $responsedata['param'] ?? [];
     $redirecturltype = [

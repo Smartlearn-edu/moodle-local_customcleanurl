@@ -64,6 +64,30 @@ class helper {
     }
 
     /**
+     * Check local_customcleanurl route
+     */
+    public static function customcleanurl_routecheck() {
+        global $CFG;
+        if (isset($CFG->customcleanurlroutecheck)) {
+            return $CFG->customcleanurlroutecheck;
+        }
+        $ch = curl_init($CFG->wwwroot . '/customcleanurl/routetest');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpcode === 200) {
+            $response = json_decode($response);
+            $CFG->customcleanurlroutecheck = isset($response->status) ? (bool)$response->status : false;
+        } else {
+            $CFG->customcleanurlroutecheck = false;
+        }
+        return $CFG->customcleanurlroutecheck;
+    }
+
+    /**
      * Resolves a given request URL to a Moodle internal path or file.
      *
      * @param string $requesturl The URL to be resolved (can be relative or absolute).
@@ -175,6 +199,12 @@ class helper {
                 $responsedata['urltype'] = 'phppath';
                 return $responsedata;
             }
+        }
+
+        // customcleanurl routetest.
+        if ($requestpath == '/customcleanurl/routetest') {
+            $responsedata['urltype'] = 'customcleanurl_routetest';
+            return $responsedata;
         }
 
         // At last redirect to 404 page if the path is not found.
