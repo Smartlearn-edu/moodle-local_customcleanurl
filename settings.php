@@ -35,6 +35,7 @@ if ($hassiteconfig) {
 
     $checkrewritehtaccess = '';
     $isenablecustomcleanurl = helper::is_enable_customcleanurl();
+    $customcleanurlroutecheck = false;
 
     // ... Heading.
     $settings = new admin_settingpage('local_customcleanurl', get_string('pluginname', 'local_customcleanurl'));
@@ -45,31 +46,34 @@ if ($hassiteconfig) {
     $title = get_string('enable_customcleanurl', 'local_customcleanurl');
     $description = '';
     if ($isenablecustomcleanurl) {
-        $customcleanurlroutecheck = helper::customcleanurl_routecheck();
-        if ($customcleanurlroutecheck) {
-            $description .= html_writer::tag(
-                'div',
-                get_string('pass_customcleanurlroutecheck', 'local_customcleanurl'),
-                ["class" => "alert alert-info alert-block fade in  alert-dismissible"]
-            );
-        } else {
-            $description .= html_writer::tag(
-                'div',
-                get_string('fail_customcleanurlroutecheck', 'local_customcleanurl'),
-                ["class" => "alert alert-danger alert-block fade in  alert-dismissible"]
-            );
-            $description .= html_writer::tag(
-                'div',
-                html_writer::tag('pre', \local_customcleanurl\local\htaccess::get_default_htaccess_content()),
-                ["class" => "alert alert-info alert-block fade in  alert-dismissible"]
-            );
+        $section =  optional_param('section', '', PARAM_TEXT);
+        if ($section == 'local_customcleanurl') {
+            $customcleanurlroutecheck = helper::customcleanurl_routecheck();
+            if ($customcleanurlroutecheck) {
+                $description .= html_writer::tag(
+                    'div',
+                    get_string('pass_customcleanurlroutecheck', 'local_customcleanurl'),
+                    ["class" => "alert alert-info alert-block fade in  alert-dismissible"]
+                );
+            } else {
+                $description .= html_writer::tag(
+                    'div',
+                    get_string('fail_customcleanurlroutecheck', 'local_customcleanurl'),
+                    ["class" => "alert alert-danger alert-block fade in  alert-dismissible"]
+                );
+                $description .= html_writer::tag(
+                    'div',
+                    html_writer::tag('pre', \local_customcleanurl\local\htaccess::get_default_htaccess_content()),
+                    ["class" => "alert alert-info alert-block fade in  alert-dismissible"]
+                );
+            }
         }
     }
     $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
     $settings->add($setting);
 
     // ... after enable enable_customcleanurl, check route.
-    if ($isenablecustomcleanurl) {
+    if ($isenablecustomcleanurl && $customcleanurlroutecheck) {
         // ... define custom url type.
         $checkboxoptions  = [
             'courseurl' => get_string('course_url', 'local_customcleanurl'),

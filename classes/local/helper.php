@@ -71,13 +71,12 @@ class helper {
         if (isset($CFG->customcleanurlroutecheck)) {
             return $CFG->customcleanurlroutecheck;
         }
-        $ch = curl_init($CFG->wwwroot . '/customcleanurl/routetest');
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $CFG->wwwroot . '/customcleanurl/routetest');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         $response = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-
         if ($httpcode === 200) {
             $response = json_decode($response);
             $CFG->customcleanurlroutecheck = isset($response->status) ? (bool)$response->status : false;
