@@ -73,7 +73,7 @@ if ($hassiteconfig) {
     $settings->add($setting);
 
     // ... after enable enable_customcleanurl, check route.
-    if ($isenablecustomcleanurl && $customcleanurlroutecheck) {
+    if ($isenablecustomcleanurl) {
         // ... define custom url type.
         $checkboxoptions  = [
             'courseurl' => get_string('course_url', 'local_customcleanurl'),
@@ -90,18 +90,19 @@ if ($hassiteconfig) {
         $description = get_string('cleanurl_options_desc', 'local_customcleanurl');
         $setting = new admin_setting_configmulticheckbox($name, $title, $description, $defaultvalues, $checkboxoptions);
         $settings->add($setting);
-    }
 
-    // ... define custom url link
-    $cleanurloptions = get_config('local_customcleanurl', 'cleanurl_type');
-    $cleanurloptions = explode(",", $cleanurloptions);
-    if (in_array('defineurl', $cleanurloptions) && $isenablecustomcleanurl) {
-        $a = new stdClass();
-        $a->url = (new moodle_url('/local/customcleanurl/define_custom_url.php'))->out(false);
-        $settings->add(new admin_setting_heading(
-            'local_customcleanurl',
-            get_string('define_custom_url', 'local_customcleanurl'),
-            get_string('define_custom_urldesc', 'local_customcleanurl', $a)
-        ));
+
+        // ... define custom url link
+        $cleanurloptions = get_config('local_customcleanurl', 'cleanurl_type');
+        $cleanurloptions = explode(",", $cleanurloptions);
+        if (in_array('defineurl', $cleanurloptions)) {
+            $a = new stdClass();
+            $a->url = (new moodle_url('/local/customcleanurl/define_custom_url.php'))->out(false);
+            $settings->add(new admin_setting_heading(
+                'local_customcleanurl',
+                get_string('define_custom_url', 'local_customcleanurl'),
+                get_string('define_custom_urldesc', 'local_customcleanurl', $a)
+            ));
+        }
     }
 }

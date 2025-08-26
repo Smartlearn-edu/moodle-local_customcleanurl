@@ -99,8 +99,8 @@ class customcleanurl_form extends \moodleform {
                     $filepath = substr($filepath, strlen($CFG->subdirpath));
                 }
             }
-            if (preg_match('#^/admin#', $filepath, $matches)) {
-                $errors['default_url'] = get_string('error_default_url_adminurl','local_customcleanurl');
+            if (str_starts_with($filepath, '/admin')) {
+                $errors['default_url'] = get_string('error_default_url_adminurl', 'local_customcleanurl');
             }
             $moodlefile = $CFG->dirroot .  $filepath;
             $a->default_url = trim($data['default_url']);

@@ -71,18 +71,23 @@ class helper {
         if (isset($CFG->customcleanurlroutecheck)) {
             return $CFG->customcleanurlroutecheck;
         }
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $CFG->wwwroot . '/customcleanurl/routetest');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        if ($httpcode === 200) {
-            $response = json_decode($response);
-            $CFG->customcleanurlroutecheck = isset($response->status) ? (bool)$response->status : false;
-        } else {
-            $CFG->customcleanurlroutecheck = false;
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $CFG->wwwroot . '/customcleanurl/routetest');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            if ($httpcode === 200) {
+                $response = json_decode($response);
+                $customcleanurlroutecheck = isset($response->status) ? (bool)$response->status : false;
+            } else {
+                $customcleanurlroutecheck = false;
+            }
+        } catch (\Throwable $th) {
+            $customcleanurlroutecheck = false;
         }
+        $CFG->customcleanurlroutecheck = $customcleanurlroutecheck;
         return $CFG->customcleanurlroutecheck;
     }
 
