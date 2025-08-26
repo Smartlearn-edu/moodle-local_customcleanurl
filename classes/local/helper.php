@@ -184,7 +184,10 @@ class helper {
     }
 
     /**
-     * 
+     * Determine the type of a given response for customcleanurl;
+     *
+     * @param string $responsepath The relative URL path to evaluate (e.g., "/course/view.php").
+     * @return string The URL type key if matched, otherwise a generated identifier from the path.
      */
     public static function geturlpathtype($responsepath) {
         $urltypes = [
@@ -193,7 +196,7 @@ class helper {
                 '/course/edit.php',
                 '/course/index.php',
             ],
-            'customcleanurl_userurl' => '/user/profile.php'
+            'customcleanurl_userurl' => '/user/profile.php',
         ];
         foreach ($urltypes as $key => $item) {
             if (is_array($item)) {
