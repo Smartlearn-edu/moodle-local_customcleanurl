@@ -78,6 +78,7 @@ $string['default_url'] = 'Default Moodle URL';
 $string['default_url_help'] = 'Default original moodle url. <br> It should be .php url and must start with your_domain or / .<br> Example: your_domain/course/view.php?id=7 <br> <strong>All the moodle url may not support the clean url.</strong>';
 $string['custom_url'] = "Custom URL";
 $string['custom_url_help'] = 'Clean custom url. <br> It should not match moodle default url, which is without .php file and moodle dir url.<br> Example: your_domain/course/math';
+$string['error_default_url_adminurl'] = 'Admin url is not accepted.';
 $string['error_default_url'] = 'Default Moodle URL "{$a->default_url}" is alrady taken.';
 $string['error_default_url_alrady_clean'] = 'Default Moodle URL "{$a->default_url}" is alrady clean.';
 $string['error_default_url_path'] = 'Provided path "{$a->default_url}" must start with forward slash "/".';
