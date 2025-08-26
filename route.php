@@ -29,14 +29,15 @@ $requesturi = $_SERVER['REQUEST_URI'];
 require_login(null, false);
 
 $responsedata = \local_customcleanurl\local\helper::check_requesturl($requesturi);
-
+// var_dump($responsedata);
+// die;
 if (isset($responsedata['status']) && $responsedata['status']) {
     $moodleurl = $responsedata['moodleurl'] ?? '';
     $urltype = $responsedata['urltype'] ?? '';
     $filepath = $responsedata['filepath'] ?? '';
     $param = $responsedata['param'] ?? [];
-
-    if ($moodleurl && $urltype == 'mod_page_view') {
+    $redirecturltype = ['mod_page_view', 'mod_resource_view', 'mod_folder_view', 'mod_url_view', 'mod_url_index','mod_imscp_view'];
+    if ($moodleurl && in_array($urltype, $redirecturltype)) {
         redirect($moodleurl);
         die();
     }
