@@ -143,7 +143,7 @@ class helper {
                     return $responsedata;
                 }
             }
-            $responsepath = $responseurl->get_path(false);
+            $responsepath = str_replace($subdirpath, '', $responseurl->get_path(false));
             $responsedata['urltype'] = self::geturlpathtype($responsepath);
             $responsedata['filepath'] = $CFG->dirroot . $responsepath;
             $responsedata['param'] = $responseurl->params();
