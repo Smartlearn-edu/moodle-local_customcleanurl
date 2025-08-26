@@ -45,39 +45,22 @@ if ($hassiteconfig) {
     $title = get_string('enable_customcleanurl', 'local_customcleanurl');
     $description = '';
     if ($isenablecustomcleanurl) {
-        $checkrewritehtaccess = \local_customcleanurl\local\htaccess::check_rewrite_htaccess();
-        if (!$checkrewritehtaccess) {
-            $description .= html_writer::tag(
-                'div',
-                get_string('change_htaccess_as_readme', 'local_customcleanurl'),
-                ["class" => "alert alert-danger alert-block fade in  alert-dismissible"]
-            );
-        } else {
-            $recheckrewritehtaccess = \local_customcleanurl\local\htaccess::check_other_rewrite_rule_htaccess();
-            if (!$recheckrewritehtaccess) {
-                $description .= html_writer::tag(
-                    'div',
-                    get_string('recheck_htaccess_as_readme', 'local_customcleanurl'),
-                    ["class" => "alert alert-danger alert-block fade in  alert-dismissible"]
-                );
-            }
-        }
+        $description .= html_writer::tag(
+            'div',
+            get_string('change_htaccess_as_readme', 'local_customcleanurl'),
+            ["class" => "alert alert-danger alert-block fade in  alert-dismissible"]
+        );
+        $description .= html_writer::tag(
+            'div',
+            html_writer::tag('pre', \local_customcleanurl\local\htaccess::get_default_htaccess_content()),
+            ["class" => "alert alert-info alert-block fade in  alert-dismissible"]
+        );
     }
     $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
     $settings->add($setting);
 
     // ... after enable enable_customcleanurl, check route.
     if ($isenablecustomcleanurl) {
-
-        if (!$checkrewritehtaccess) {
-            $name = 'local_customcleanurl/set_htaccess';
-            $title = get_string('set_htaccess', 'local_customcleanurl');
-            $description = get_string('set_htaccess_desc', 'local_customcleanurl');
-            $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
-            $setting->set_updatedcallback('local_customcleanurl_set_htaccess');
-            $settings->add($setting);
-        }
-
         // ... define custom url type.
         $checkboxoptions  = [
             'courseurl' => get_string('course_url', 'local_customcleanurl'),

@@ -45,10 +45,7 @@ $string['delete_data_heading'] = 'Delete custom url';
 $string['delete_conform_text'] = 'Are you sure you want to delete "{$a->customcleanurl}"?';
 
 $string['enable_customcleanurl'] = 'Enable Customcleanurl';
-$string['change_htaccess_as_readme'] = 'Change the .htaccess accoding to readme file.';
-$string['recheck_htaccess_as_readme'] = 'Re-change the .htaccess accoding to readme file, as there might be some changes. <br><strong>IGNORE</strong> if you have made the changes.';
-$string['set_htaccess'] = 'Set htaccess route';
-$string['set_htaccess_desc'] = 'change the .htaccess accoding to readme file. <br> After change conform by chacking .htaccess file, where there is rewrite rule for this plugin, and if there is any other rewrite rule remove other rules except from local_customcleanurl to match readme file rules.';
+$string['change_htaccess_as_readme'] = 'Change the htaccess accoding to readme file or add below rules into htaccess.';
 $string['course_url'] = 'Course URL';
 $string['user_url'] = 'User URL';
 $string['define_custom_url'] = 'Define Custom URL';
