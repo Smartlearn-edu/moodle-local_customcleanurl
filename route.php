@@ -68,6 +68,9 @@ if (isset($responsedata['status']) && $responsedata['status']) {
     }
 }
 // Output message content.
+$context = \context_system::instance();
+$PAGE->set_context($context);
+$PAGE->set_url($requesturi);
 echo $OUTPUT->header();
 echo $responsedata['message'] ?? '';
 echo $OUTPUT->footer();
