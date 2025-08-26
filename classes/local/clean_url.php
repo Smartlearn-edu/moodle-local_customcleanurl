@@ -70,6 +70,9 @@ class clean_url {
      * @return void
      */
     private function execute() {
+        if (!in_array($this->originalurl->get_scheme(), ['http', 'https'])) {
+            return;
+        }
         if (!helper::is_enable_customcleanurl()) {
             return;
         }

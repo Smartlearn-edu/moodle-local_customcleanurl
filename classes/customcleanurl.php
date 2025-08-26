@@ -75,7 +75,10 @@ class customcleanurl implements \core\output\url_rewriter {
                 $output .= self::get_replacestate_script($cleanurl);
                 $output .= self::get_anchor_fix_javascript($cleanurl);
                 $output .= self::get_link_canonical();
-                self::mark_apache_note($cleanurl);
+                // Set a custom HTTP header to store clean URL for server logs or analytics.
+                if (!headers_sent()) {
+                    header('X-Clean-URL: ' . $cleanurl);
+                }
             }
 
             return $output;
@@ -152,24 +155,5 @@ HTML;
 
         $cleanescaped = $PAGE->url->out(true);
         return "<link rel=\"canonical\" href=\"{$cleanescaped}\" />\n";
-    }
-
-    /**
-     * At this point the url is already clean, so analytics which run in
-     * the page like Google Analytics will only use clean urls and so you
-     * will get nice drill down reports etc. However analytics software
-     * that parses the apache logs will see the raw original url. Worse
-     * it will see some as clean and some as unclean and get inconsistent
-     * data. To workaround this we publish an apache note so that we can
-     * put the clean url into the logs like this:
-     *
-     * LogFormat "...  %{CLEANURL}n ... \"%{User-Agent}i\"" ...
-     *
-     * @param $clean string
-     */
-    private static function mark_apache_note($clean) {
-        if (function_exists('apache_note')) {
-            apache_note('CLEANURL', $clean);
-        }
     }
 }
