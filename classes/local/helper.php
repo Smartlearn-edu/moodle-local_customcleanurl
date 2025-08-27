@@ -206,7 +206,7 @@ class helper {
             }
         }
 
-        // customcleanurl routetest.
+        // ... customcleanurl routetest.
         if ($requestpath == '/customcleanurl/routetest') {
             $responsedata['urltype'] = 'customcleanurl_routetest';
             return $responsedata;

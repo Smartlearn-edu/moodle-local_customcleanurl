@@ -206,6 +206,10 @@ class clean_url {
 
         // ... params
         $courseid = isset($this->params['id']) ? $this->params['id'] : '';
+        // ... If home page course return.
+        if ($courseid == '1') {
+            return;
+        }
         $categoryid = isset($this->params['categoryid']) ? $this->params['categoryid'] : '';
         // ... filter paths
         $cleannewpath = $this->remove_index_php('/view.php');

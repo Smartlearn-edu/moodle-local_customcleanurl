@@ -46,7 +46,7 @@ if ($hassiteconfig) {
     $title = get_string('enable_customcleanurl', 'local_customcleanurl');
     $description = '';
     if ($isenablecustomcleanurl) {
-        $section =  optional_param('section', '', PARAM_TEXT);
+        $section = optional_param('section', '', PARAM_TEXT);
         if ($section == 'local_customcleanurl') {
             $customcleanurlroutecheck = helper::customcleanurl_routecheck();
             if ($customcleanurlroutecheck) {
