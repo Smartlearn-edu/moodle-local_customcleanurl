@@ -56,17 +56,3 @@ function local_customcleanurl_after_config() {
         \local_customcleanurl\local\helper::urlrewriteclass_initialize();
     }
 }
-
-
-/**
- * Callback to update the `.htaccess` file with required rewrite rules.
- *
- * Invoked when plugin settings are changed.
- * Ensures the custom rewrite rules are written and resets the
- * `set_htaccess` config flag.
- *
- */
-function local_customcleanurl_set_htaccess() {
-    \local_customcleanurl\local\htaccess::set_htaccess();
-    set_config('set_htaccess', '0', 'local_customcleanurl');
-}
