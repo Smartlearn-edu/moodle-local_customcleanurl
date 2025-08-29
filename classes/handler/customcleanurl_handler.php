@@ -46,38 +46,45 @@ class customcleanurl_handler {
     /**
      * Save or update a custom clean URL entry.
      *
-     * @param \stdClass $data       Form data containing default_url, custom_url, and optionally id.
+     * @param \stdClass $mformdata       Form data containing default_url, custom_url, and optionally id.
      * @param moodle_url|string $returnurl URL to redirect to after saving.
      * @param string $cleanurltype Type of clean URL (e.g., 'defineurl'). Defaults to 'defineurl'.
      * @return void Redirects to the given return URL with a status message.
      */
-    public static function save_data($data, $returnurl, $cleanurltype = 'defineurl') {
+    public static function save_data($mformdata, $returnurl, $cleanurltype = 'defineurl') {
         global $DB, $CFG;
         $status = false;
         $message = '';
-        try {
-            $data->cleanurl_type = $cleanurltype;
-            $data->default_url = str_replace($CFG->wwwroot, '', $data->default_url);
-            $data->custom_url = str_replace($CFG->wwwroot, '', $data->custom_url);
-            $data->timemodified = time();
+        $data = new stdClass();
+        $data->id = $mformdata->id;
+        $data->action = $mformdata->action;
+        if ($cleanurltype == $mformdata->type) {
+            try {
+                $data->cleanurl_type = $cleanurltype;
+                $data->default_url = str_replace($CFG->wwwroot, '', trim($mformdata->default_url));
+                $data->default_url = rtrim($data->default_url, '/');
+                $data->custom_url = str_replace($CFG->wwwroot, '', trim($mformdata->custom_url));
 
-            if ($data->id && ($data->action == 'edit')) {
-                $dataexists = $DB->record_exists(self::$dbtable, ['id' => $data->id]);
-                if ($dataexists) {
-                    $status = $DB->update_record(self::$dbtable, $data);
+                $data->timemodified = time();
+
+                if ($data->id && ($data->action == 'edit')) {
+                    $dataexists = $DB->record_exists(self::$dbtable, ['id' => $data->id]);
+                    if ($dataexists) {
+                        $status = $DB->update_record(self::$dbtable, $data);
+                        if ($status) {
+                            $message = get_string('data_updated', 'local_customcleanurl');
+                        }
+                    }
+                } else {
+                    $data->timecreated = time();
+                    $status = $DB->insert_record(self::$dbtable, $data);
                     if ($status) {
-                        $message = get_string('data_updated', 'local_customcleanurl');
+                        $message = get_string('data_saved', 'local_customcleanurl');
                     }
                 }
-            } else {
-                $data->timecreated = time();
-                $status = $DB->insert_record(self::$dbtable, $data);
-                if ($status) {
-                    $message = get_string('data_saved', 'local_customcleanurl');
-                }
+            } catch (\Throwable $th) {
+                $message = get_string('data_saved_error', 'local_customcleanurl');
             }
-        } catch (\Throwable $th) {
-            $message = get_string('data_saved_error', 'local_customcleanurl');
         }
         if (!$message) {
             $message = get_string('something_went_wrong', 'local_customcleanurl');
@@ -152,13 +159,14 @@ class customcleanurl_handler {
     /**
      * Generate and return a paginated table of custom clean URLs.
      *
+     * @param string $pagepath
      * @param int $perpage Number of records per page. Default = 12.
+     * @param string $cleanurltype Type of clean URL (e.g., 'defineurl'). Defaults to 'defineurl'.
      * @return string HTML output of the table.
      */
-    public static function get_custom_url_data_table(int $perpage = 12) {
+    public static function get_custom_url_data_table($pagepath, int $perpage = 12, $cleanurltype = 'defineurl') {
         global $CFG, $DB, $PAGE;
         $outputdata = '';
-        $pagepath = '/local/customcleanurl/define_custom_url.php';
         $pageurl = new moodle_url($pagepath);
         // ... table generate.
         require_once($CFG->libdir . '/tablelib.php');
@@ -172,7 +180,8 @@ class customcleanurl_handler {
         $tableheaders = [
             get_string('sn', 'local_customcleanurl'),
             get_string('default_url', 'local_customcleanurl'),
-            get_string('custom_url', 'local_customcleanurl'),
+            ($cleanurltype == 'defineurl') ?
+                get_string('custom_url', 'local_customcleanurl') : get_string('redirect_url', 'local_customcleanurl'),
             get_string('action'),
         ];
         $table->define_columns($tablecolumns);
@@ -192,7 +201,7 @@ class customcleanurl_handler {
         $table->no_sorting('action');
         $table->no_sorting('id');
         $table->setup();
-        $table->pagesize($perpage, $DB->count_records(self::$dbtable, []));
+        $table->pagesize($perpage, $DB->count_records(self::$dbtable, ['cleanurl_type' => $cleanurltype]));
         $limitfrom = $table->get_page_start();
         $limitnum = $table->get_page_size();
         if (isset($_GET['ssort']) && $table->get_sql_sort()) {
@@ -201,7 +210,14 @@ class customcleanurl_handler {
             $sort = 'id DESC';
         }
         // ... get data from db.
-        $datarecords = $DB->get_records(self::$dbtable, [], $sort, $fields = '*', $limitfrom = $limitfrom, $limitnum = $limitnum);
+        $datarecords = $DB->get_records(
+            self::$dbtable,
+            ['cleanurl_type' => $cleanurltype],
+            $sort,
+            $fields = '*',
+            $limitfrom,
+            $limitnum,
+        );
         ob_start();
         if ($datarecords) {
             $i = $limitfrom + 1;

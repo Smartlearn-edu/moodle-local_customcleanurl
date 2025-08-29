@@ -41,22 +41,21 @@ require_login(null, false);
 if (!has_capability('moodle/site:config', $context)) {
     throw new moodle_exception('invalidaccess', 'local_customcleanurl');
 }
-$cleanurloptions = get_config('local_customcleanurl', 'cleanurl_type');
-$cleanurloptions = explode(",", $cleanurloptions);
-if (!(in_array('defineurl', $cleanurloptions) && helper::is_enable_customcleanurl())) {
-    throw new moodle_exception('featureisnotenable', 'local_customcleanurl');
+$enableurlredirect = get_config('local_customcleanurl', 'enable_urlredirect');
+if (!$enableurlredirect) {
+    throw new moodle_exception('featureurlredirectisnotenable', 'local_customcleanurl');
 }
 
 // Prepare the page information.
-$pagepath = '/local/customcleanurl/define_custom_url.php';
+$pagepath = '/local/customcleanurl/define_urlredirect.php';
 $pageurl = new moodle_url($pagepath);
-$pagetitle = get_string('define_custom_url', 'local_customcleanurl');
+$pagetitle = get_string('define_urlredirect', 'local_customcleanurl');
 
 // Setup page information.
 $PAGE->set_context($context);
 $PAGE->set_url($pageurl);
 $PAGE->set_pagelayout('admin');
-$PAGE->set_pagetype('define_custom_url');
+$PAGE->set_pagetype('define_urlredirect');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($pagetitle);
 $PAGE->navbar->add($pagetitle);
@@ -64,12 +63,11 @@ $PAGE->set_blocks_editing_capability('moodle/site:manageblocks');
 $PAGE->requires->jquery();
 
 // FORM actions.
-$definecustomurlform = new \local_customcleanurl\form\customcleanurl_form(null, ['type' => 'defineurl']);
-
+$definecustomurlform = new \local_customcleanurl\form\customcleanurl_form(null, ['type' => 'urlredirect']);
 if ($definecustomurlform->is_cancelled()) {
     redirect($pageurl);
 } else if ($formdata = $definecustomurlform->get_data()) {
-    customcleanurl_handler::save_data($formdata, $pageurl, 'defineurl');
+    customcleanurl_handler::save_data($formdata, $pageurl, 'urlredirect');
 } else {
     if ($action && $id) {
         // Verify sesskey.
@@ -91,12 +89,12 @@ if ($definecustomurlform->is_cancelled()) {
 // Get the data and display.
 $contents = '';
 $contents .= html_writer::start_tag('div', ['class' => 'add-custom-url-wrapper mt-4 mb-4']);
-$contents .= html_writer::tag('h3', get_string('add_new_url', 'local_customcleanurl'));
+$contents .= html_writer::tag('h3', get_string('add_new_url_redirect', 'local_customcleanurl'));
 $contents .= $definecustomurlform->render();
 $contents .= html_writer::end_tag('div');
 $contents .= html_writer::start_tag('div', ['class' => 'custom-url-list-wrapper mt-4 mb-4']);
-$contents .= html_writer::tag('h3', get_string('list_custom_url', 'local_customcleanurl'));
-$contents .= customcleanurl_handler::get_custom_url_data_table($pagepath, 50, 'defineurl');
+$contents .= html_writer::tag('h3', get_string('list_custom_urlredirect', 'local_customcleanurl'));
+$contents .= customcleanurl_handler::get_custom_url_data_table($pagepath, 50, 'urlredirect');
 $contents .= html_writer::end_tag('div');
 
 // Output Content.

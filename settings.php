@@ -72,6 +72,20 @@ if ($hassiteconfig) {
     $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
     $settings->add($setting);
 
+    // ... Enable url redirect
+    $name = 'local_customcleanurl/enable_urlredirect';
+    $title = get_string('enable_urlredirect', 'local_customcleanurl');
+    $description = get_string('enable_urlredirect_desc', 'local_customcleanurl');
+    $enableurlredirect = get_config('local_customcleanurl', 'enable_urlredirect');
+    if ($enableurlredirect) {
+        $a = new stdClass();
+        $a->url = (new moodle_url('/local/customcleanurl/define_urlredirect.php'))->out(false);
+        $description .= get_string('enable_urlredirect_descwithlink', 'local_customcleanurl', $a);
+    }
+
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $settings->add($setting);
+
     // ... after enable enable_customcleanurl, check route.
     if ($isenablecustomcleanurl) {
         // ... define custom url type.

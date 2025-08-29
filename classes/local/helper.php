@@ -130,7 +130,13 @@ class helper {
 
         // Case 1: Admin-defined custom mapping.
         if (in_array('defineurl', $cleanurltype)) {
-            $checkcustomurlpath = $DB->get_record('local_customcleanurl', ['custom_url' => $requestpath]);
+            $checkcustomurlpath = $DB->get_record(
+                'local_customcleanurl',
+                [
+                    'custom_url' => $requestpath,
+                    'cleanurl_type' => 'defineurl',
+                ],
+            );
             if ($checkcustomurlpath) {
                 $responseuri = $checkcustomurlpath->default_url;
             }
@@ -264,6 +270,36 @@ class helper {
         }
         if (self::is_enable_customcleanurl() && class_exists('\local_customcleanurl\customcleanurl')) {
             $CFG->urlrewriteclass = '\\local_customcleanurl\\customcleanurl';
+        }
+    }
+
+
+    /**
+     * Check url redirect and initialize url redirect.
+     *
+     * @return void
+     */
+    public static function urlredirect_initialize() {
+        global $CFG, $DB;
+        $enableurlredirect = get_config('local_customcleanurl', 'enable_urlredirect');
+        if ($enableurlredirect) {
+            $requesturi = $_SERVER['REQUEST_URI'];
+            $subdirpath = (new \moodle_url($CFG->wwwroot))->get_path(false);
+            $requestmoodleurl = new moodle_url(rtrim($requesturi, "/"));
+            $requesturl = $requestmoodleurl->out(false);
+            $requesturl = str_replace($CFG->wwwroot, '', $requesturl);
+            $requesturl = str_replace($subdirpath, '', $requesturl);
+
+            $checkcustomurlpath = $DB->get_record(
+                'local_customcleanurl',
+                [
+                    'default_url' => $requesturl,
+                    'cleanurl_type' => 'urlredirect',
+                ],
+            );
+            if ($checkcustomurlpath) {
+                redirect(new moodle_url($checkcustomurlpath->custom_url));
+            }
         }
     }
 }
