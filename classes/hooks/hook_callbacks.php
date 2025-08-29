@@ -52,6 +52,7 @@ class hook_callbacks {
         if (class_exists("\local_customcleanurl\local\helper")) {
             \local_customcleanurl\local\helper::urlrewriteclass_initialize();
         }
+        \local_customcleanurl\local\helper::urlredirect_initialize();
     }
 
 

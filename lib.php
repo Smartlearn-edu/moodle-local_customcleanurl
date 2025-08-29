@@ -39,6 +39,7 @@ function local_customcleanurl_before_http_headers() {
     if (class_exists("\local_customcleanurl\local\helper")) {
         \local_customcleanurl\local\helper::urlrewriteclass_initialize();
     }
+    \local_customcleanurl\local\helper::urlredirect_initialize();
 }
 
 

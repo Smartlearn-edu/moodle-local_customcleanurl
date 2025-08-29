@@ -32,6 +32,7 @@ $string['configtitle'] = 'Custom Clean URL Settings';
 $string['privacy:metadata'] = 'local customcleanurl plugin does not store any data itself.';
 $string['invalidaccess'] = 'Invalid access.';
 $string['featureisnotenable'] = "Custom Clean URL is not enable.";
+$string['featureurlredirectisnotenable'] = "URL redirect is not enable.";
 $string['invalidsesskey'] = "Invalid sesskey";
 $string['add_new_url'] = "Add new url";
 $string['list_custom_url'] = "List of custom url";
@@ -41,7 +42,7 @@ $string['errorpage404'] = "404 error page";
 $string['cachedef_clean_url'] = 'Clean URL Cache';
 $string['cachedef_unclean_url'] = 'Default moodle URL cache';
 $string['invalidcustomparam'] = 'Parameter "{$a->param}" is restricted as this parameter is alrady present in original url "{$a->responsepath}"';
-$string['delete_data_heading'] = 'Delete custom url';
+$string['delete_data_heading'] = 'Delete URL';
 $string['delete_conform_text'] = 'Are you sure you want to delete "{$a->customcleanurl}"?';
 
 $string['enable_customcleanurl'] = 'Enable Customcleanurl';
@@ -71,29 +72,39 @@ This will change the default moodle url to clean url.
     <li>Define Custom URL :: you can re-write particular custom moodle url.</li>
 </ol>
 ';
-$string['clean_url_type'] = 'Custom URL Type';
-$string['define_custom_urldesc'] = 'Now you can define custom url for the existing moodle url at <a href="{$a->url}">HERE - Define Custom URL</a>.';
+
+$string['define_urlredirect'] = 'Define URL Redirect';
+$string['enable_urlredirect'] = 'Enable url redirect';
+$string['enable_urlredirect_desc'] = 'URLs are redirected to the next destination URL.';
+$string['enable_urlredirect_descwithlink'] = ' <br> Now you can define url redirect for the existing moodle url at <a href="{$a->url}" target="_blank">HERE - URL Redirect</a>.';
+$string['list_custom_urlredirect'] = 'List of custom url redirect';
+$string['add_new_url_redirect'] = 'Add new url redirect';
+$string['destination_url'] = 'Destination URL';
+
+$string['clean_url_type'] = 'Custom Clean URL Type';
+$string['define_custom_urldesc'] = 'Now you can define custom url for the existing moodle url at <a href="{$a->url}" target="_blank" >HERE - Define Custom URL</a>.';
 
 $string['sn'] = 'S.N.';
 $string['default_url'] = 'Default Moodle URL';
 $string['default_url_help'] = 'Default original moodle url. <br> It should be .php url and must start with your_domain or / .<br> Example: your_domain/course/view.php?id=7 <br> <strong>All the moodle url may not support the clean url.</strong>';
 $string['custom_url'] = "Custom URL";
+$string['redirect_url'] = "Redirect URL";
 $string['custom_url_help'] = 'Clean custom url. <br> It should not match moodle default url, which is without .php file and moodle dir url.<br> Example: your_domain/course/math';
 $string['error_default_url_adminurl'] = 'Admin url is not accepted.';
-$string['error_default_url'] = 'Default Moodle URL "{$a->default_url}" is alrady taken.';
+$string['error_default_url'] = 'Default Moodle URL "{$a->default_url}" alrady taken.';
 $string['error_default_url_alrady_clean'] = 'Default Moodle URL "{$a->default_url}" is alrady clean.';
 $string['error_default_url_path'] = 'Provided path "{$a->default_url}" must start with forward slash "/".';
 $string['error_default_url_not_originalurl'] = 'Provided URL "{$a->default_url}" is not the default original URL.';
 $string['error_custom_url_is_default'] = 'Provided URL "{$a->custom_url}" is the default original moodle URL.';
 $string['error_custom_url_path'] = 'Provided path "{$a->custom_url}" must start with forward slash "/".';
-$string['error_custom_exist'] = 'Provided Custom Clean URL "{$a->custom_url}" is alrady taken.';
+$string['error_custom_exist'] = 'Provided URL "{$a->custom_url}" alrady taken.';
 $string['error_custom_url_not_originalurl'] = 'Provided URL "{$a->custom_url}" is not the default original URL.';
 $string['error_customurlparam'] = 'Custom Clean url cannot have parameter.';
 
 $string['edit_custom_url_title'] = 'Edit custom url';
-$string['data_saved'] = 'Custom url data is sucesfully saved.';
-$string['data_updated'] = 'Custom url data is sucesfully updated.';
-$string['data_saved_error'] = 'Custom url data error on save.';
+$string['data_saved'] = 'Data is sucesfully saved.';
+$string['data_updated'] = 'Data is sucesfully updated.';
+$string['data_saved_error'] = 'Data error on save.';
 $string['something_went_wrong'] = 'Something went wrong.';
 $string['data_delete'] = 'successfully deleted.';
 $string['data_delete_missing'] = 'Delete data is missing.';

@@ -149,7 +149,13 @@ class clean_url {
         // For cleanurl_type = defineurl.
         if (in_array('defineurl', $cleanurltype)) {
             $defaulturl = str_replace($CFG->wwwroot, '', $this->originalurl->raw_out(false));
-            $checkcustomurlpath = $DB->get_record('local_customcleanurl', ['default_url' => $defaulturl]);
+            $checkcustomurlpath = $DB->get_record(
+                'local_customcleanurl',
+                [
+                    'default_url' => $defaulturl,
+                    'cleanurl_type' => 'defineurl',
+                ],
+            );
             if ($checkcustomurlpath) {
                 $this->path = $checkcustomurlpath->custom_url;
                 $this->params = [];

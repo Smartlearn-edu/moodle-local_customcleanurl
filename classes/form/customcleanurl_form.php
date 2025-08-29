@@ -46,19 +46,36 @@ class customcleanurl_form extends \moodleform {
      */
     public function definition() {
         $mform = $this->_form;
+        // ... get custom data.
+        $type = $this->_customdata['type'] ?? 'defineurl';
 
-        // Moodle default url.
-        $mform->addElement('text', 'default_url', get_string('default_url', 'local_customcleanurl'), ['size' => 70]);
-        $mform->addRule('default_url', null, 'required', null, 'client');
-        $mform->addHelpButton('default_url', 'default_url', 'local_customcleanurl');
-        $mform->setType('default_url', PARAM_TEXT);
+        // ... type defineurl
+        if ($type == 'defineurl') {
+            // Moodle default url.
+            $mform->addElement('text', 'default_url', get_string('default_url', 'local_customcleanurl'), ['size' => 70]);
+            $mform->addRule('default_url', null, 'required', null, 'client');
+            $mform->addHelpButton('default_url', 'default_url', 'local_customcleanurl');
+            $mform->setType('default_url', PARAM_TEXT);
 
-        // Custom url.
-        $mform->addElement('text', 'custom_url', get_string('custom_url', 'local_customcleanurl'), ['size' => 70]);
-        $mform->addRule('custom_url', null, 'required', null, 'client');
-        $mform->addHelpButton('custom_url', 'custom_url', 'local_customcleanurl');
-        $mform->setType('custom_url', PARAM_TEXT);
+            // Custom url.
+            $mform->addElement('text', 'custom_url', get_string('custom_url', 'local_customcleanurl'), ['size' => 70]);
+            $mform->addRule('custom_url', null, 'required', null, 'client');
+            $mform->addHelpButton('custom_url', 'custom_url', 'local_customcleanurl');
+            $mform->setType('custom_url', PARAM_TEXT);
+        }
 
+        // ... type urlredirect
+        if ($type == 'urlredirect') {
+            // Moodle url.
+            $mform->addElement('text', 'default_url', get_string('default_url', 'local_customcleanurl'), ['size' => 70]);
+            $mform->addRule('default_url', null, 'required', null, 'client');
+            $mform->setType('default_url', PARAM_TEXT);
+
+            // Redirect url.
+            $mform->addElement('text', 'custom_url', get_string('destination_url', 'local_customcleanurl'), ['size' => 70]);
+            $mform->addRule('custom_url', null, 'required', null, 'client');
+            $mform->setType('custom_url', PARAM_TEXT);
+        }
         // ... action btn
         $this->add_action_buttons();
 
@@ -70,6 +87,10 @@ class customcleanurl_form extends \moodleform {
         $mform->addElement('hidden', 'action');
         $mform->setType('action', PARAM_TEXT);
         $mform->setDefault('action', '');
+
+        $mform->addElement('hidden', 'type');
+        $mform->setType('type', PARAM_TEXT);
+        $mform->setDefault('type', $type);
     }
 
     /**
@@ -85,69 +106,111 @@ class customcleanurl_form extends \moodleform {
 
         $errors = parent::validation($data, $files);
         $a = new stdClass();
+        $a->default_url = trim($data['default_url']);
+        $a->custom_url = trim($data['custom_url']);
 
-        if (!isset($CFG->subdirpath)) {
-            $CFG->subdirpath = (new \moodle_url($CFG->wwwroot))->get_path(false);
-        }
+        // ... validation for type defineurl
+        if ($data['type'] == 'defineurl') {
 
-        // Add field validation check for duplicate default_url.
-        if ($data['default_url']) {
-            $mooodleurl = new moodle_url(trim($data['default_url']));
-            $filepath = $mooodleurl->get_path(false);
-            if (!empty($CFG->subdirpath)) {
-                if (strpos($filepath, $CFG->subdirpath) === 0) {
-                    $filepath = substr($filepath, strlen($CFG->subdirpath));
-                }
+            if (!isset($CFG->subdirpath)) {
+                $CFG->subdirpath = (new \moodle_url($CFG->wwwroot))->get_path(false);
             }
-            if (str_starts_with($filepath, '/admin')) {
-                $errors['default_url'] = get_string('error_default_url_adminurl', 'local_customcleanurl');
-            }
-            $moodlefile = $CFG->dirroot .  $filepath;
-            $a->default_url = trim($data['default_url']);
-            if (strpos($mooodleurl->get_path(false), '/') != 0) {
-                $errors['default_url'] = get_string('error_default_url_path', 'local_customcleanurl', $a);
-            } else if ($mooodleurl->get_host() != (new moodle_url($CFG->wwwroot))->get_host()) {
-                $errors['default_url'] = get_string('error_default_url_not_originalurl', 'local_customcleanurl', $a);
-            } else if (is_file($moodlefile)) {
-                if ($existing = $DB->get_record($dbtable, ['default_url' => trim($data['default_url'])])) {
-                    if (!$data['id'] || $existing->id != $data['id']) {
-                        $errors['default_url'] = get_string('error_default_url', 'local_customcleanurl', $a);
+
+            // Add field validation check for duplicate default_url.
+            if ($data['default_url']) {
+                $mooodleurl = new moodle_url(trim($data['default_url']));
+                $filepath = $mooodleurl->get_path(false);
+                if (!empty($CFG->subdirpath)) {
+                    if (strpos($filepath, $CFG->subdirpath) === 0) {
+                        $filepath = substr($filepath, strlen($CFG->subdirpath));
                     }
                 }
-            } else if (is_dir($moodlefile)) {
-                $errors['default_url'] = get_string('error_default_url_alrady_clean', 'local_customcleanurl', $a);
-            } else {
-                $errors['default_url'] = get_string('error_default_url_not_originalurl', 'local_customcleanurl', $a);
+                if (str_starts_with($filepath, '/admin')) {
+                    $errors['default_url'] = get_string('error_default_url_adminurl', 'local_customcleanurl');
+                }
+                $moodlefile = $CFG->dirroot .  $filepath;
+                if (strpos($mooodleurl->get_path(false), '/') != 0) {
+                    $errors['default_url'] = get_string('error_default_url_path', 'local_customcleanurl', $a);
+                } else if ($mooodleurl->get_host() != (new moodle_url($CFG->wwwroot))->get_host()) {
+                    $errors['default_url'] = get_string('error_default_url_not_originalurl', 'local_customcleanurl', $a);
+                } else if (is_file($moodlefile)) {
+                    $defaulturl = str_replace($CFG->wwwroot, '', trim($data['default_url']));
+                    if ($existing = $DB->get_record($dbtable, [
+                        'default_url' => $defaulturl,
+                        'cleanurl_type' => 'defineurl',
+                    ])) {
+                        if (!$data['id'] || $existing->id != $data['id']) {
+                            $errors['default_url'] = get_string('error_default_url', 'local_customcleanurl', $a);
+                        }
+                    }
+                } else if (is_dir($moodlefile)) {
+                    $errors['default_url'] = get_string('error_default_url_alrady_clean', 'local_customcleanurl', $a);
+                } else {
+                    $errors['default_url'] = get_string('error_default_url_not_originalurl', 'local_customcleanurl', $a);
+                }
+            }
+
+            // Add field validation check for duplicate custom_url.
+            if ($data['custom_url']) {
+                $cleanurl = new moodle_url(trim($data['custom_url']));
+                $filepath = $cleanurl->get_path(false);
+                if ($cleanurl->params()) {
+                    $errors['custom_url'] = get_string('error_customurlparam', 'local_customcleanurl', $a);
+                }
+                if (!empty($CFG->subdirpath)) {
+                    if (strpos($filepath, $CFG->subdirpath) === 0) {
+                        $filepath = substr($filepath, strlen($CFG->subdirpath));
+                    }
+                }
+                $cleanurlfile = $CFG->dirroot . $filepath;
+                if (strpos($cleanurl->get_path(false), '/') != 0) {
+                    $errors['custom_url'] = get_string('error_custom_url_path', 'local_customcleanurl', $a);
+                } else if ($cleanurl->get_host() != (new moodle_url($CFG->wwwroot))->get_host()) {
+                    $errors['custom_url'] = get_string('error_custom_url_not_originalurl', 'local_customcleanurl', $a);
+                } else if (is_file($cleanurlfile)) {
+                    $errors['custom_url'] = get_string('error_custom_url_is_default', 'local_customcleanurl', $a);
+                } else if (is_dir($cleanurlfile)) {
+                    $errors['custom_url'] = get_string('error_default_url_alrady_clean', 'local_customcleanurl', $a);
+                } else {
+                    $customurl = str_replace($CFG->wwwroot, '', trim($data['custom_url']));
+                    if ($existing = $DB->get_record($dbtable, [
+                        'custom_url' => $customurl,
+                        'cleanurl_type' => 'defineurl',
+                    ])) {
+                        if (!$data['id'] || $existing->id != $data['id']) {
+                            $errors['custom_url'] = get_string('error_custom_exist', 'local_customcleanurl', $a);
+                        }
+                    }
+                }
             }
         }
 
-        // Add field validation check for duplicate custom_url.
-        if ($data['custom_url']) {
-            $cleanurl = new moodle_url(trim($data['custom_url']));
-            $filepath = $cleanurl->get_path(false);
-            if ($cleanurl->params()) {
-                $errors['custom_url'] = get_string('error_customurlparam', 'local_customcleanurl', $a);
-            }
-            if (!empty($CFG->subdirpath)) {
-                if (strpos($filepath, $CFG->subdirpath) === 0) {
-                    $filepath = substr($filepath, strlen($CFG->subdirpath));
+        // ... validation for type urlredirect
+        if ($data['type'] == 'urlredirect') {
+            if ($data['default_url']) {
+                $mooodleurl = new moodle_url(trim($data['default_url']));
+                if (strpos($mooodleurl->get_path(false), '/') != 0) {
+                    $errors['default_url'] = get_string('error_default_url_path', 'local_customcleanurl', $a);
+                } else if ($mooodleurl->get_host() != (new moodle_url($CFG->wwwroot))->get_host()) {
+                    $errors['default_url'] = get_string('error_default_url_not_originalurl', 'local_customcleanurl', $a);
+                } else {
+                    $defaulturl = str_replace($CFG->wwwroot, '', trim($data['default_url']));
+                    if ($existing = $DB->get_record($dbtable, [
+                        'default_url' => $defaulturl,
+                        'cleanurl_type' => 'urlredirect',
+                    ])) {
+                        if (!$data['id'] || $existing->id != $data['id']) {
+                            $errors['default_url'] = get_string('error_default_url', 'local_customcleanurl', $a);
+                        }
+                    }
                 }
             }
-            $cleanurlfile = $CFG->dirroot . $filepath;
-            $a->custom_url = trim($data['custom_url']);
-            if (strpos($cleanurl->get_path(false), '/') != 0) {
-                $errors['custom_url'] = get_string('error_custom_url_path', 'local_customcleanurl', $a);
-            } else if ($cleanurl->get_host() != (new moodle_url($CFG->wwwroot))->get_host()) {
-                $errors['custom_url'] = get_string('error_custom_url_not_originalurl', 'local_customcleanurl', $a);
-            } else if (is_file($cleanurlfile)) {
-                $errors['custom_url'] = get_string('error_custom_url_is_default', 'local_customcleanurl', $a);
-            } else if (is_dir($cleanurlfile)) {
-                $errors['custom_url'] = get_string('error_default_url_alrady_clean', 'local_customcleanurl', $a);
-            } else {
-                if ($existing = $DB->get_record($dbtable, ['custom_url' => trim(rtrim($data['custom_url'], '/'))])) {
-                    if (!$data['id'] || $existing->id != $data['id']) {
-                        $errors['custom_url'] = get_string('error_custom_exist', 'local_customcleanurl', $a);
-                    }
+
+            if ($data['custom_url']) {
+                $data['custom_url'] = rtrim($data['custom_url'], '/');
+                $cleanurl = new moodle_url(trim($data['custom_url']));
+                if (strpos($cleanurl->get_path(false), '/') != 0) {
+                    $errors['custom_url'] = get_string('error_custom_url_path', 'local_customcleanurl', $a);
                 }
             }
         }
