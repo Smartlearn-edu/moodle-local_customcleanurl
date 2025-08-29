@@ -1,5 +1,5 @@
 # customcleanurl
-Customcleanurl main idea is to convert the moodle url in more user readable format and SEO friendly url. Also provide custom url define for existing moodle url and 404 page template.
+Customcleanurl main idea is to convert the moodle url in more user readable format and SEO friendly url. Also provide custom url define for existing moodle url and 404 page template. It also provide the old url redirect to new/next url.
 
 ## For Example:
 1. Course View Page URL
@@ -37,3 +37,4 @@ ErrorDocument 404 /local/customcleanurl/404.php
 ## Screenshot
 ![Clean custom url setting](./pix/screenshot/general_settings.png)
 ![Define custom url](./pix/screenshot/define_custom_url.png)
+![Define redirect url](./pix/screenshot/define_urlredirect.png)
