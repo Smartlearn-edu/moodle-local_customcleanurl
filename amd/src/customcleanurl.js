@@ -22,21 +22,21 @@
  *
  */
 
-define(['core/notification', 'core/str'], function (notification, str) {
+define(['core/notification', 'core/str'], function(notification, str) {
     return {
-        conformdelete: function () {
-            document.querySelectorAll('.delete-action').forEach(function (link) {
-                link.addEventListener('click', function (e) {
+        conformdelete: function() {
+            document.querySelectorAll('.delete-action').forEach(function(link) {
+                link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const url = this.getAttribute('href');
-                    let data_title = this.getAttribute('data-title');
-                    data_title = (data_title) ? data_title : '';
+                    let dataTitle = this.getAttribute('data-title');
+                    dataTitle = (dataTitle) ? dataTitle : '';
                     notification.confirm(
                         str.get_string('delete_data_heading', 'local_customcleanurl'),
-                        str.get_string('delete_conform_text', 'local_customcleanurl', { customcleanurl: data_title }),
+                        str.get_string('delete_conform_text', 'local_customcleanurl', {customcleanurl: dataTitle}),
                         str.get_string('yes'),
                         str.get_string('cancel'),
-                        function () {
+                        function() {
                             window.location.href = url;
                         }
                     );
