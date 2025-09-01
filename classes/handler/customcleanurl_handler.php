@@ -101,7 +101,7 @@ class customcleanurl_handler {
      * @return void Redirects to the given return URL with a status message.
      */
     public static function delete_data($id, $returnurl) {
-        global $DB, $USER;
+        global $DB;
         $message = '';
 
         $data = $DB->get_record(self::$dbtable, ['id' => $id]);

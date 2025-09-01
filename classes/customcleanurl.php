@@ -88,7 +88,7 @@ class customcleanurl implements \core\output\url_rewriter {
     /**
      * Set base url
      *
-     * @param $uncleanedurl string
+     * @param string $uncleanedurl string
      * @return string
      */
     private static function get_base_href($uncleanedurl) {
@@ -104,7 +104,7 @@ class customcleanurl implements \core\output\url_rewriter {
      * Importantly this needs to happen before any JS on the page uses it,
      * such as any analytics tracking.
      *
-     * @param $clean string
+     * @param string $clean string
      * @return string
      */
     private static function get_replacestate_script($clean) {
@@ -119,7 +119,7 @@ class customcleanurl implements \core\output\url_rewriter {
      * links now appear to link to another page and not this one and cause
      * a reload. So on the fly we detect this and insert the clean url base.
      *
-     * @param $clean string
+     * @param string $clean string
      * @return string
      */
     private static function get_anchor_fix_javascript($clean) {
