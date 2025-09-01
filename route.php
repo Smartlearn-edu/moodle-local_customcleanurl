@@ -24,6 +24,8 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+// Login is intentionally not required for this endpoint.
+// This script handles public routing and error responses.
 defined('MOODLE_INTERNAL') || die();
 $requesturi = $_SERVER['REQUEST_URI'];
 
