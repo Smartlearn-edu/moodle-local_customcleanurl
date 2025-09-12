@@ -104,7 +104,7 @@ class helper {
         $subdirpath = (new \moodle_url($CFG->wwwroot))->get_path(false);
         $requestmoodleurl = new moodle_url(rtrim($requesturl, "/"));
         $requestpath = $requestmoodleurl->get_path(false);
-        $requestpath = str_replace($subdirpath, '', $requestpath);
+        $requestpath = urldecode(str_replace($subdirpath, '', $requestpath));
 
         $responsedata = [
             'status' => true,

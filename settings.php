@@ -24,7 +24,7 @@
  *
  */
 
-use html_writer;
+use core\output\html_writer;
 use local_customcleanurl\local\helper;
 
 defined('MOODLE_INTERNAL') || die();
@@ -82,7 +82,6 @@ if ($hassiteconfig) {
         $a->url = (new moodle_url('/local/customcleanurl/define_urlredirect.php'))->out(false);
         $description .= get_string('enable_urlredirect_descwithlink', 'local_customcleanurl', $a);
     }
-
     $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
     $settings->add($setting);
 
@@ -102,21 +101,22 @@ if ($hassiteconfig) {
         $name = 'local_customcleanurl/cleanurl_type';
         $title = get_string('clean_url_type', 'local_customcleanurl');
         $description = get_string('cleanurl_options_desc', 'local_customcleanurl');
-        $setting = new admin_setting_configmulticheckbox($name, $title, $description, $defaultvalues, $checkboxoptions);
-        $settings->add($setting);
-
-
         // ... define custom url link
         $cleanurloptions = get_config('local_customcleanurl', 'cleanurl_type');
         $cleanurloptions = explode(",", $cleanurloptions);
         if (in_array('defineurl', $cleanurloptions)) {
             $a = new stdClass();
             $a->url = (new moodle_url('/local/customcleanurl/define_custom_url.php'))->out(false);
-            $settings->add(new admin_setting_heading(
-                'local_customcleanurl',
-                get_string('define_custom_url', 'local_customcleanurl'),
-                get_string('define_custom_urldesc', 'local_customcleanurl', $a)
-            ));
+            $description .= get_string('define_custom_urldesc', 'local_customcleanurl', $a);
         }
+        $setting = new admin_setting_configmulticheckbox($name, $title, $description, $defaultvalues, $checkboxoptions);
+        $settings->add($setting);
+
+        // ... 404 error page content
+        $name = 'local_customcleanurl/error404_content';
+        $title = get_string('error404_content', 'local_customcleanurl');
+        $description = get_string('error404_content_desc', 'local_customcleanurl');
+        $setting = new admin_setting_confightmleditor($name, $title, $description, '');
+        $settings->add($setting);
     }
 }

@@ -26,7 +26,8 @@
 
 namespace local_customcleanurl\handler;
 
-use html_writer;
+use core\output\html_writer;
+use core_table\flexible_table;
 use moodle_url;
 use stdClass;
 
@@ -170,7 +171,7 @@ class customcleanurl_handler {
         $pageurl = new moodle_url($pagepath);
         // ... table generate.
         require_once($CFG->libdir . '/tablelib.php');
-        $table = new \flexible_table('moodle-clean-custom-url-data');
+        $table = new flexible_table('moodle-clean-custom-url-data');
         $tablecolumns = [
             'id',
             'default_url',
@@ -238,10 +239,12 @@ class customcleanurl_handler {
                         'sesskey' => sesskey(),
                     ]
                 ))->out(false);
+                $default_url = $CFG->wwwroot . $record->default_url;
+                $custom_url = $CFG->wwwroot . $record->custom_url;
                 $row = [];
                 $row[] = $i;
-                $row[] = $record->default_url;
-                $row[] = $record->custom_url;
+                $row[] = html_writer::link($default_url, $default_url);
+                $row[] = html_writer::link($custom_url, $custom_url);
                 $row[] = html_writer::link($editlink, get_string('edit'), ["class" => "btn btn-primary"]) .
                     html_writer::link(
                         $deletelink,
