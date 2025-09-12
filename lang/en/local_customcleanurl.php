@@ -80,9 +80,10 @@ $string['enable_urlredirect_descwithlink'] = ' <br> Now you can define url redir
 $string['list_custom_urlredirect'] = 'List of custom url redirect';
 $string['add_new_url_redirect'] = 'Add new url redirect';
 $string['destination_url'] = 'Destination URL';
-
 $string['clean_url_type'] = 'Custom Clean URL Type';
 $string['define_custom_urldesc'] = 'Now you can define custom url for the existing moodle url at <a href="{$a->url}" target="_blank" >HERE - Define Custom URL</a>.';
+$string['error404_content']='404 Page Content';
+$string['error404_content_desc']='Content which is shown in 404 error Page.';
 
 $string['sn'] = 'S.N.';
 $string['default_url'] = 'Default Moodle URL';

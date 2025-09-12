@@ -20,5 +20,12 @@
 }}
 
 <div class="local_customcleanurl-404 mt-4 mb-4">
-	<p>{{#str}} errorpage404, local_customcleanurl {{/str}} </p>
+	<div class="error-content">
+		{{#error404content}}
+		{{{error404content}}}
+		{{/error404content}}
+		{{^error404content}}
+		<p>{{#str}} errorpage404, local_customcleanurl {{/str}} </p>
+		{{/error404content}}
+	</div>
 </div>
