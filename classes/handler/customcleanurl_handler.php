@@ -239,12 +239,12 @@ class customcleanurl_handler {
                         'sesskey' => sesskey(),
                     ]
                 ))->out(false);
-                $default_url = $CFG->wwwroot . $record->default_url;
-                $custom_url = $CFG->wwwroot . $record->custom_url;
+                $defaulturl = $CFG->wwwroot . $record->default_url;
+                $customurl = $CFG->wwwroot . $record->custom_url;
                 $row = [];
                 $row[] = $i;
-                $row[] = html_writer::link($default_url, $default_url);
-                $row[] = html_writer::link($custom_url, $custom_url);
+                $row[] = html_writer::link($defaulturl, $defaulturl);
+                $row[] = html_writer::link($customurl, $customurl);
                 $row[] = html_writer::link($editlink, get_string('edit'), ["class" => "btn btn-primary"]) .
                     html_writer::link(
                         $deletelink,
