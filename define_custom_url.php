@@ -23,6 +23,7 @@
  *
  */
 
+use core\exception\moodle_exception;
 use core\output\html_writer;
 use local_customcleanurl\handler\customcleanurl_handler;
 use local_customcleanurl\local\helper;
