@@ -40,16 +40,15 @@ require_once($CFG->libdir . '/formslib.php');
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class customcleanurl_form extends \moodleform {
-
     /**
      * Define form.
      */
     public function definition() {
         $mform = $this->_form;
-        // ... get custom data.
+        // Get custom data.
         $type = $this->_customdata['type'] ?? 'defineurl';
 
-        // ... type defineurl
+        // Type defineurl.
         if ($type == 'defineurl') {
             // Moodle default url.
             $mform->addElement('text', 'default_url', get_string('default_url', 'local_customcleanurl'), ['size' => 70]);
@@ -64,7 +63,7 @@ class customcleanurl_form extends \moodleform {
             $mform->setType('custom_url', PARAM_TEXT);
         }
 
-        // ... type urlredirect
+        // Type urlredirect.
         if ($type == 'urlredirect') {
             // Moodle url.
             $mform->addElement('text', 'default_url', get_string('default_url', 'local_customcleanurl'), ['size' => 70]);
@@ -76,10 +75,10 @@ class customcleanurl_form extends \moodleform {
             $mform->addRule('custom_url', null, 'required', null, 'client');
             $mform->setType('custom_url', PARAM_TEXT);
         }
-        // ... action btn
+        // Action btn.
         $this->add_action_buttons();
 
-        // ... hidden fields
+        // Hidden fields.
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', 0);
@@ -136,9 +135,9 @@ class customcleanurl_form extends \moodleform {
                 } else if (is_file($moodlefile)) {
                     $defaulturl = str_replace($CFG->wwwroot, '', trim($data['default_url']));
                     if ($existing = $DB->get_record($dbtable, [
-                        'default_url' => $defaulturl,
-                        'cleanurl_type' => 'defineurl',
-                    ])) {
+                            'default_url' => $defaulturl,
+                            'cleanurl_type' => 'defineurl',
+                        ])) {
                         if (!$data['id'] || $existing->id != $data['id']) {
                             $errors['default_url'] = get_string('error_default_url', 'local_customcleanurl', $a);
                         }
@@ -174,9 +173,9 @@ class customcleanurl_form extends \moodleform {
                 } else {
                     $customurl = str_replace($CFG->wwwroot, '', trim($data['custom_url']));
                     if ($existing = $DB->get_record($dbtable, [
-                        'custom_url' => $customurl,
-                        'cleanurl_type' => 'defineurl',
-                    ])) {
+                            'custom_url' => $customurl,
+                            'cleanurl_type' => 'defineurl',
+                        ])) {
                         if (!$data['id'] || $existing->id != $data['id']) {
                             $errors['custom_url'] = get_string('error_custom_exist', 'local_customcleanurl', $a);
                         }
@@ -196,9 +195,9 @@ class customcleanurl_form extends \moodleform {
                 } else {
                     $defaulturl = str_replace($CFG->wwwroot, '', trim($data['default_url']));
                     if ($existing = $DB->get_record($dbtable, [
-                        'default_url' => $defaulturl,
-                        'cleanurl_type' => 'urlredirect',
-                    ])) {
+                            'default_url' => $defaulturl,
+                            'cleanurl_type' => 'urlredirect',
+                        ])) {
                         if (!$data['id'] || $existing->id != $data['id']) {
                             $errors['default_url'] = get_string('error_default_url', 'local_customcleanurl', $a);
                         }

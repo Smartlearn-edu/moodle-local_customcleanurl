@@ -38,7 +38,6 @@ use moodle_url;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class clean_url {
-
     /** @var moodle_url Original Moodle URL before processing. */
     private $originalurl;
 

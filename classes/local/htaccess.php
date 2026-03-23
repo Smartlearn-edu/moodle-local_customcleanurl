@@ -35,7 +35,6 @@ namespace local_customcleanurl\local;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class htaccess {
-
     /**
      * Get absolute path to the `.htaccess` file inside Moodle root.
      *

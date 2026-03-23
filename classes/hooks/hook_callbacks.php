@@ -36,8 +36,6 @@ use core\hook\output\before_http_headers;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class hook_callbacks {
-
-
     /**
      * Callback allowing to before_http_headers
      *

@@ -30,17 +30,20 @@ use moodle_url;
 use stdClass;
 
 /**
- * helper class for customcleanurl local
+ * Helper class for local_customcleanurl plugin.
+ *
+ * Provides utility methods for URL rewriting, routing, and redirect functionality.
  *
  * @package    local_customcleanurl
  * @copyright  2025 santoshtmp <https://santoshmagar.com.np/>
  * @author     santoshtmp
- * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class helper {
-
     /**
      * Checks whether custom clean URL feature is enabled in plugin settings.
+     *
+     * Caches the result in $CFG to avoid repeated database lookups.
      *
      * @return bool True if custom clean URLs are enabled, false otherwise.
      */
@@ -64,7 +67,12 @@ class helper {
     }
 
     /**
-     * Check local_customcleanurl route
+     * Checks if the local_customcleanurl route is accessible.
+     *
+     * Performs an HTTP request to the route test endpoint and caches
+     * the result in $CFG to avoid repeated checks.
+     *
+     * @return bool True if the route is accessible, false otherwise.
      */
     public static function customcleanurl_routecheck() {
         global $CFG;
@@ -95,9 +103,18 @@ class helper {
     /**
      * Resolves a given request URL to a Moodle internal path or file.
      *
-     * @param string $requesturl The URL to be resolved (can be relative or absolute).
-     * @return array
+     * Analyzes the request path and determines the appropriate Moodle URL,
+     * file path, and parameters based on configured clean URL types.
      *
+     * @param string $requesturl The URL to be resolved (can be relative or absolute).
+     * @return array{
+     *     status: bool,
+     *     moodleurl: string,
+     *     filepath: string,
+     *     param: array,
+     *     message: string,
+     *     urltype: string
+     * } Response data containing resolution details.
      */
     public static function check_requesturl($requesturl) {
         global $CFG, $DB;
@@ -128,7 +145,7 @@ class helper {
         $cleanurltype = get_config('local_customcleanurl', 'cleanurl_type');
         $cleanurltype = explode(",", $cleanurltype);
 
-        // Case 1: Admin-defined custom mapping.
+        // Case 1: Admin-defined custom mapping (defineurl).
         if (in_array('defineurl', $cleanurltype)) {
             $checkcustomurlpath = $DB->get_record(
                 'local_customcleanurl',
@@ -142,7 +159,7 @@ class helper {
             }
         }
 
-        // Case 2: Course-related URLs.
+        // Case 2: Course-related URLs (courseurl).
         if (in_array('courseurl', $cleanurltype) && !$responseuri && $parts[0] === 'course') {
             $course = $DB->get_record('course', ['shortname' => $uniquename]);
             if ($course && count($parts) === 2) {
@@ -155,7 +172,7 @@ class helper {
             }
         }
 
-        // Case 3: User profile URLs.
+        // Case 3: User profile URLs (userurl).
         if (in_array('userurl', $cleanurltype) && !$responseuri && $parts[0] === 'user') {
             $user = $DB->get_record('user', ['username' => $uniquename]);
             if ($user && count($parts) === 3) {
@@ -178,20 +195,19 @@ class helper {
                     return $responsedata;
                 }
             }
-            $responsepath = str_replace($subdirpath, '', $responseurl->get_path(false));
             $rawresponsepath = $responseurl->get_path(false);
-            $fileresponsepath = str_starts_with($rawresponsepath, $subdirpath)
+            $responsepath = str_starts_with($rawresponsepath, $subdirpath)
                 ? substr($rawresponsepath, strlen($subdirpath))
                 : $rawresponsepath;
             $responsedata['urltype'] = self::geturlpathtype($responsepath);
-            $responsedata['filepath'] = $CFG->dirroot . $fileresponsepath;
+            $responsedata['filepath'] = $CFG->dirroot . $responsepath;
             $responsedata['param'] = $responseurl->params();
             $responsedata['moodleurl'] = $responseurl->raw_out(false);
 
             return $responsedata;
         }
 
-        // Directory as path.
+        // Directory as path - check for index files.
         $dirpath = $CFG->dirroot . $requestpath;
         if (is_dir($dirpath)) {
             $files = scandir($dirpath);
@@ -206,7 +222,7 @@ class helper {
             }
         }
 
-        // Check if php file is present in path.
+        // Check if PHP file exists in the path.
         if (str_contains($requestpath, '.php')) {
             $filepath = $CFG->dirroot . explode('.php', $requestpath)[0] . '.php';
             if (file_exists($filepath)) {
@@ -216,20 +232,23 @@ class helper {
             }
         }
 
-        // ... customcleanurl routetest.
+        // Handle customcleanurl route test endpoint.
         if ($requestpath == '/customcleanurl/routetest') {
             $responsedata['urltype'] = 'customcleanurl_routetest';
             return $responsedata;
         }
 
-        // At last redirect to 404 page if the path is not found.
+        // Return 404 if no matching path is found.
         $responsedata['urltype'] = '404';
         $responsedata['filepath'] = $CFG->dirroot . '/local/customcleanurl/404.php';
         return $responsedata;
     }
 
     /**
-     * Determine the type of a given response for customcleanurl;
+     * Determines the type of a given response path for customcleanurl.
+     *
+     * Matches the response path against known URL patterns (course, user)
+     * and returns a corresponding type identifier.
      *
      * @param string $responsepath The relative URL path to evaluate (e.g., "/course/view.php").
      * @return string The URL type key if matched, otherwise a generated identifier from the path.
@@ -279,7 +298,10 @@ class helper {
 
 
     /**
-     * Check url redirect and initialize url redirect.
+     * Checks and processes URL redirects defined in the plugin.
+     *
+     * If URL redirect is enabled and the current request matches a defined
+     * redirect rule, redirects the user to the configured custom URL.
      *
      * @return void
      */
