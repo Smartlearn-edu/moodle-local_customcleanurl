@@ -179,8 +179,12 @@ class helper {
                 }
             }
             $responsepath = str_replace($subdirpath, '', $responseurl->get_path(false));
+            $rawresponsepath = $responseurl->get_path(false);
+            $fileresponsepath = str_starts_with($rawresponsepath, $subdirpath)
+                ? substr($rawresponsepath, strlen($subdirpath))
+                : $rawresponsepath;
             $responsedata['urltype'] = self::geturlpathtype($responsepath);
-            $responsedata['filepath'] = $CFG->dirroot . $responsepath;
+            $responsedata['filepath'] = $CFG->dirroot . $fileresponsepath;
             $responsedata['param'] = $responseurl->params();
             $responsedata['moodleurl'] = $responseurl->raw_out(false);
 
