@@ -4,7 +4,6 @@
 * initial release
 * clean url format feature release
 
-
 ### Version 1.1.0 (2025083000)
 * redirect url feature release
 
@@ -14,6 +13,9 @@
 
 ### Version 1.1.2 (2026032300)
 * fix issue in subdir file path
+
+### Version 1.1.3 (2026042100)
+* set page url as clean path
 
 
 
