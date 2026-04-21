@@ -298,15 +298,15 @@ class helper {
 
 
     /**
-     * Checks and processes URL redirects defined in the plugin.
+     * Checks and processes URL.
      *
      * If URL redirect is enabled and the current request matches a defined
      * redirect rule, redirects the user to the configured custom URL.
      *
-     * @return void
+     * @return void 
      */
     public static function urlredirect_initialize() {
-        global $CFG, $DB;
+        global $CFG, $DB, $PAGE;
         $enableurlredirect = get_config('local_customcleanurl', 'enable_urlredirect');
         if ($enableurlredirect) {
             $requesturi = $_SERVER['REQUEST_URI'];
@@ -325,6 +325,11 @@ class helper {
             );
             if ($checkcustomurlpath) {
                 redirect(new moodle_url($checkcustomurlpath->custom_url));
+            }
+
+            // Set the page URL to the clean URL if the request is a clean URL.
+            if ($requesturl) {
+                $PAGE->set_url($requesturl);
             }
         }
     }

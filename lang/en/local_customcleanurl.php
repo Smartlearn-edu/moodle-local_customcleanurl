@@ -58,8 +58,8 @@ This will change the default moodle url to clean url.
 <ol>
     <li>Course URL
         <ol>
-            <li>your_domain/course/view.php?id={ID} => your_domain/course/{course_shot_name}</li>
-            <li>your_domain/course/edit.php?id={ID} => your_domain/course/edit/{course_shot_name}</li>
+            <li>your_domain/course/view.php?id={ID} => your_domain/course/{course_short_name}</li>
+            <li>your_domain/course/edit.php?id={ID} => your_domain/course/edit/{course_short_name}</li>
             <li>your_domain/course/index.php => your_domain/course</li>
             <li>your_domain/course/index.php?categoryid={ID} => your_domain/course/category/{ID}/{category_name}</li>
         </ol>
