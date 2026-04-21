@@ -3,11 +3,11 @@ Customcleanurl main idea is to convert the moodle url in more user readable form
 
 ## For Example:
 1. Course View Page URL
-    your_domain/course/view.php?id=ID => your_domain/course/course_shot_name
+    your_domain/course/view.php?id=ID => your_domain/course/course_short_name
 2. Course Category Page URL
     your_domain/course/index.php?categoryid=ID => your_domain/course/category/ID/category_name
 3. Course Edit Page URL
-    your_domain/course/edit.php?id=ID => your_domain/course/edit/course_shot_name
+    your_domain/course/edit.php?id=ID => your_domain/course/edit/course_short_name
 4. User Profile URL
     your_domain/user/profile.php?id=ID => your_domain/user/profile/username
 5. Other as defined like: 
