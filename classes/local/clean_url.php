@@ -222,7 +222,7 @@ class clean_url {
             $course = $DB->get_record('course', ['id' => $courseid]);
             if ($course) {
                 unset($this->params['id']);
-                $cleannewpath = $cleannewpath . '/' . urlencode($course->shortname);
+                $cleannewpath = $cleannewpath . '/' . urlencode(strtolower($course->shortname));
                 if ($this->check_path_allowed($cleannewpath)) {
                     $this->path = $cleannewpath;
                 }
