@@ -15,28 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Public routing endpoint for custom clean URLs.
  *
  * @package    local_customcleanurl
  * @copyright  2025 https://santoshmagar.com.np/
  * @author     santoshtmp
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
  */
 
+// phpcs:ignore moodle.Files.RequireLogin.Missing -- This endpoint is intentionally public.
 require_once(__DIR__ . '/../../config.php');
-// Login is intentionally not required for this endpoint.
-// This script handles public routing and error responses.
-defined('MOODLE_INTERNAL') || die();
+
 $requesturi = $_SERVER['REQUEST_URI'];
 
 $responsedata = \local_customcleanurl\local\helper::check_requesturl($requesturi);
 
-if (isset($responsedata['status']) && $responsedata['status']) {
+if (!empty($responsedata['status'])) {
     $urltype = $responsedata['urltype'] ?? '';
 
-    if ($urltype == 'customcleanurl_routetest') {
+    if ($urltype === 'customcleanurl_routetest') {
         echo json_encode(['status' => true]);
-        die();
+        exit;
     }
 
     $moodleurl = $responsedata['moodleurl'] ?? '';
@@ -51,18 +50,18 @@ if (isset($responsedata['status']) && $responsedata['status']) {
         'mod_imscp_view',
         'mod_bigbluebuttonbn_view',
     ];
-    if ($moodleurl && in_array($urltype, $redirecturltype)) {
+    if (!empty($moodleurl) && in_array($urltype, $redirecturltype, true)) {
         redirect($moodleurl);
-        die();
+        exit;
     }
 
-    if ($urltype == '404') {
-        header("HTTP/1.0 404 Not Found");
-        http_response_code('404');
+    if ($urltype === '404') {
+        header('HTTP/1.0 404 Not Found');
+        http_response_code(404);
         $_SERVER['REDIRECT_STATUS'] = '404';
         chdir(dirname($filepath));
         require($filepath);
-        die();
+        exit;
     }
 
     foreach ($param as $key => $value) {
@@ -71,7 +70,7 @@ if (isset($responsedata['status']) && $responsedata['status']) {
     if (is_file($filepath)) {
         chdir(dirname($filepath));
         require($filepath);
-        die();
+        exit;
     }
 }
 // Output message content.

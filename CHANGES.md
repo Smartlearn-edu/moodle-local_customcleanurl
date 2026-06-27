@@ -17,5 +17,8 @@
 ### Version 1.1.3 (2026042100)
 * set page url as clean path
 
+### Version 1.1.4 (2026062700)
+* fix issue related to required parameter id
+
 
 

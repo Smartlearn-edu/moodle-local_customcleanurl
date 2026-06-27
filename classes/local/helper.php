@@ -303,7 +303,7 @@ class helper {
      * If URL redirect is enabled and the current request matches a defined
      * redirect rule, redirects the user to the configured custom URL.
      *
-     * @return void 
+     * @return void
      */
     public static function urlredirect_initialize() {
         global $CFG, $DB, $PAGE;
@@ -325,11 +325,6 @@ class helper {
             );
             if ($checkcustomurlpath) {
                 redirect(new moodle_url($checkcustomurlpath->custom_url));
-            }
-
-            // Set the page URL to the clean URL if the request is a clean URL.
-            if ($requesturl) {
-                $PAGE->set_url($requesturl);
             }
         }
     }
