@@ -32,7 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/adminlib.php');
 
 if ($hassiteconfig) {
-
     $checkrewritehtaccess = '';
     $isenablecustomcleanurl = helper::is_enable_customcleanurl();
     $customcleanurlroutecheck = false;

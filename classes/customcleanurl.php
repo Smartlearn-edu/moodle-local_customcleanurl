@@ -37,7 +37,6 @@ use moodle_url;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class customcleanurl implements \core\output\url_rewriter {
-
     /**
      * Rewrite moodle_urls into another form.
      * By using customcleanurl if not possible.
@@ -62,7 +61,6 @@ class customcleanurl implements \core\output\url_rewriter {
      */
     public static function html_head_setup() {
         if (helper::is_enable_customcleanurl()) {
-
             global $PAGE;
             $cleanurl = $PAGE->url->out(false);
             $moodleurl = $PAGE->url->raw_out(false);
