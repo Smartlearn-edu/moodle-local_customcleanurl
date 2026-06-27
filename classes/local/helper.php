@@ -327,10 +327,6 @@ class helper {
                 redirect(new moodle_url($checkcustomurlpath->custom_url));
             }
 
-            // Set the page URL to the clean URL if the request is a clean URL.
-            if ($requesturl) {
-                $PAGE->set_url($requesturl);
-            }
         }
     }
 }
