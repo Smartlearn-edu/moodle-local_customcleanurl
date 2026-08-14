@@ -178,6 +178,12 @@ class clean_url {
                 return;
             }
         }
+
+        // For SmartLearn Custom Pages (/theme/smartlearn/page.php or view_page.php).
+        if (preg_match('#^' . $CFG->subdirpath . '/theme/smartlearn/(view_)?page\.php#', $this->path, $matches)) {
+            $this->clean_smartlearn_page_url();
+            return;
+        }
     }
 
     /**
@@ -274,6 +280,38 @@ class clean_url {
             }
         }
         return $user;
+    }
+
+    /**
+     * Cleans SmartLearn Custom Page URLs into user-friendly format (e.g., /about-us).
+     *
+     * @return void
+     */
+    private function clean_smartlearn_page_url() {
+        global $DB, $CFG;
+        $slug = $this->params['slug'] ?? '';
+        $id = $this->params['id'] ?? 0;
+
+        if ($slug) {
+            unset($this->params['slug']);
+            $cleannewpath = '/' . urlencode(strtolower($slug));
+            if ($this->check_path_allowed($cleannewpath)) {
+                $this->path = $cleannewpath;
+            }
+        } else if ($id > 0) {
+            try {
+                $page = $DB->get_record('theme_smartlearn_pages', ['id' => (int)$id]);
+                if ($page && !empty($page->slug)) {
+                    unset($this->params['id']);
+                    $cleannewpath = '/' . urlencode(strtolower($page->slug));
+                    if ($this->check_path_allowed($cleannewpath)) {
+                        $this->path = $cleannewpath;
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Table might not exist or other error.
+            }
+        }
     }
 
     /**

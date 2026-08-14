@@ -180,6 +180,22 @@ class helper {
             }
         }
 
+        // Case 4: SmartLearn Theme Custom Pages (e.g. /about-us, /pricing).
+        if (!$responseuri) {
+            $slug = trim($requestpath, '/');
+            try {
+                $checkpage = $DB->get_record('theme_smartlearn_pages', ['slug' => $slug]);
+                if (!$checkpage) {
+                    $checkpage = $DB->get_record_select('theme_smartlearn_pages', 'LOWER(slug) = ?', [strtolower($slug)]);
+                }
+                if ($checkpage) {
+                    $responseuri = "/theme/smartlearn/view_page.php?slug=" . urlencode($checkpage->slug);
+                }
+            } catch (\Throwable $e) {
+                // Table might not exist or other error.
+            }
+        }
+
         // Return the resolved Moodle URL if found.
         if ($responseuri) {
             $requestparam = $requestmoodleurl->params();
